@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+<div id="app">
+
+  <el-card class="box-card">
+    <div slot="header" class="clearfix">
+      <span>蚂蚁算法</span>
+    </div>
+    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+      <el-form-item label="起点">
+        <el-input v-model="formInline.start" placeholder="请输入起点"></el-input>
+      </el-form-item>
+      <el-form-item label="终点">
+        <el-input v-model="formInline.end" placeholder="请输入终点"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSubmit">计算</el-button>
+      </el-form-item>
+    </el-form>
+  </el-card>
+
+  <el-card class="box-card">
+    <div slot="header" class="clearfix">
+      <span>计算结果</span>
+    </div>
+    <template>
+      <el-table
+              :data="tableData1"
+              stripe
+              style="width: 100%">
+
+        <el-table-column
+                type="index"
+                :index="indexMethod"
+                label="最佳路径"
+                width="180">
+        </el-table-column>
+
+        <el-table-column
+                prop="sumPrice"
+                label="成本"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="handlePath"
+                label="路径" width="500">
+        </el-table-column>
+
+      </el-table>
+    </template>
+  </el-card>
+
+  <el-card class="box-card">
+    <div slot="header" class="clearfix">
+      <span>测试数据</span>
+    </div>
+    <template>
+      <el-table
+              :data="tableData"
+              stripe
+              style="width: 100%">
+        <el-table-column
+                prop="road"
+                label="路径编码"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="start"
+                label="起点"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="end"
+                label="终点" width="180">
+        </el-table-column>
+        <el-table-column
+                prop="distance"
+                label="距离" width="180">
+        </el-table-column>
+        <el-table-column
+                prop="price"
+                label="单位造价" width="180">
+        </el-table-column>
+      </el-table>
+    </template>
+  </el-card>
+
+</div>
+</body>
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+  var Main = {
+    data() {
+      return {
+        tableData: [],
+        tableData1: [{
+          sumPrice:"-",
+          handlePath:"-"
+        },{
+          sumPrice:"-",
+          handlePath:"-"
+        },{
+          sumPrice:"-",
+          handlePath:"-"
+        }],
+        formInline: {
+          start: '1',
+          end: '20'
+        }
+      }
+    }, created: function(){
+      this.getTableData()
+    },
+    methods: {
+
+      indexMethod(index) {
+        return index +1;
+      },
+      onSubmit:function(){
+        console.log('submit!');
+        var self = this;
+        $.ajax({
+          type : "get",
+          dataType : "json",
+          contentType : "application/json",
+          data: {start:self.formInline.start,end:self.formInline.end},
+          url : "/calculate",
+          success : function(json) {
+            self.tableData1=json;
+          },
+          error : function(json) {
+            self.$message.error('加载失败');
+          }
+        });
+      },
+      getTableData:function(){
+        var self = this;
+        $.ajax({
+          type : "get",
+          dataType : "json",
+          contentType : "application/json",
+          url : "/data.json",
+          success : function(json) {
+            self.tableData=json;
+          },
+          error : function(json) {
+            self.$message.error('加载失败');
+          }
+        });
+      }
+    }
+  }
+  var Ctor = Vue.extend(Main)
+  new Ctor().$mount('#app')
+</script>
+</html>

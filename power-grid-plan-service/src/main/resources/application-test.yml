@@ -1,0 +1,39 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+debug: true
+spring:
+  devtools:
+    add-properties: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql-cn-north-1-3aa82a3606004f05.rds.jdcloud.com:3358/trade_stock_biz?characterEncoding=utf-8&useSSL=false
+    username: testwl
+    password: DRbSY7C9Dd5Q7NY4xFRQGBvWGZ
+  redis:
+    host: redis-6wwuex1fzu5u-proxy-nlb.jvessel-open-hb.jdcloud.com
+    port: 6379
+    database: 0
+    password: ShopStock1
+    timeout: 20000
+    jedis:
+      pool:
+        min-idle: 10
+        max-idle: 40
+        max-active: 20
+        max-wait: 10000
+      shutdown-timeout: 10000
+#mybatis的相关配置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.power.grid.plan.model
+  configuration:
+    map-underscore-to-camel-case: true
+
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: countSql

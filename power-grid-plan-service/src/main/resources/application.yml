@@ -1,0 +1,15 @@
+spring:
+  mvc:
+    format:
+      date: "yyyy-MM-dd"
+  profiles:
+    active: dev
+
+
+ump:
+  jvmKey: trade.stock.biz.jvm
+  systemKey: trade.stock.biz.heart.beat
+  appName: focus_trade-stock-biz
+
+topic:
+  businessLog: business-log

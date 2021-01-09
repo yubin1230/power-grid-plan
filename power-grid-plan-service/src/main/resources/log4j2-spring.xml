@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="WARN" monitorInterval="600">
+    <properties>
+        <property name="appName">trade-stock-biz</property>
+        <Property name="PID">????</Property>
+        <property name="patternLayout">
+            %clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{%5p} %clr{${sys:PID}}{magenta} %clr{---}{faint}
+            %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}[%L]}{cyan} %clr{:}{faint} %m%n%xwEx
+        </property>
+        <property name="serviceFile">/export/Logs/${appName}/service.log</property>
+        <property name="serviceFilePattern">/export/Logs/${appName}/service-%i.log</property>
+        <property name="springFile">/export/Logs/${appName}/spring.log</property>
+        <property name="springFilePattern">/export/Logs/${appName}/spring-%i.log</property>
+        <property name="jsfFile">/export/Logs/${appName}/jsf.log</property>
+        <property name="jsfFilePattern">/export/Logs/${appName}/jsf-%i.log</property>
+    </properties>
+    <Appenders>
+
+        <Console name="console_out_appender" target="SYSTEM_OUT">
+            <ThresholdFilter level="info"/>
+            <!-- 输出日志的格式 -->
+            <PatternLayout pattern="${patternLayout}"/>
+        </Console>
+        <RollingRandomAccessFile name="serviceLog" fileName="${serviceFile}"
+                                 filePattern="${serviceFilePattern}" immediateFlush="false"
+                                 append="true">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="ACCEPT"/>
+            <PatternLayout pattern="${patternLayout}" charset="UTF-8"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="1G"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="springLog" fileName="${springFile}"
+                                 filePattern="${springFilePattern}" immediateFlush="false"
+                                 append="true">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="ACCEPT"/>
+            <PatternLayout pattern="${patternLayout}" charset="UTF-8"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="1G"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="jsfLog" fileName="${jsfFile}"
+                                 filePattern="${jsfFilePattern}" immediateFlush="false"
+                                 append="true">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="ACCEPT"/>
+            <PatternLayout pattern="${patternLayout}" charset="UTF-8"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="1G"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <Loggers>
+
+        <AsyncLogger name="com.jd.trade.stock" level="info" additivity="false" includeLocation="true">
+            <AppenderRef ref="serviceLog"/>
+            <AppenderRef ref="console_out_appender"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="com.jd.jsf" level="info" additivity="false" includeLocation="true">
+            <AppenderRef ref="jsfLog"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="org.springframework" level="info" additivity="false" includeLocation="true">
+            <AppenderRef ref="springLog"/>
+        </AsyncLogger>
+
+        <root level="info">
+            <AppenderRef ref="console_out_appender"/>
+        </root>
+    </Loggers>
+</Configuration>
