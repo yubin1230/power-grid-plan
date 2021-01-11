@@ -88,6 +88,16 @@
                 label="单位造价" width="180">
         </el-table-column>
       </el-table>
+      <el-pagination
+              background
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="pageNum"
+              :page-sizes="[100, 200, 300, 400]"
+              :page-size="pageSize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="totalPage">
+      </el-pagination>
     </template>
   </el-card>
 
@@ -102,6 +112,9 @@
   var Main = {
     data() {
       return {
+        pageSize:100,
+        pageNum:1,
+        totalPage:0,
         tableData: [],
         tableData1: [{
           sumPrice:"-",
@@ -114,8 +127,8 @@
           handlePath:"-"
         }],
         formInline: {
-          start: '1',
-          end: '20'
+          start: '97147774',
+          end: '949894'
         }
       }
     }, created: function(){
@@ -126,6 +139,14 @@
       indexMethod(index) {
         return index +1;
       },
+      handleSizeChange(val) {
+        this.pageSize=val;
+        this.getTableData();
+      },
+      handleCurrentChange(val) {
+        this.pageNum=val;
+        this.getTableData();
+      },
       onSubmit:function(){
         console.log('submit!');
         var self = this;
@@ -135,8 +156,8 @@
           contentType : "application/json",
           data: {start:self.formInline.start,end:self.formInline.end},
           url : "/calculate",
-          success : function(json) {
-            self.tableData1=json;
+          success : function(data) {
+            self.tableData1=data;
           },
           error : function(json) {
             self.$message.error('加载失败');
@@ -149,9 +170,11 @@
           type : "get",
           dataType : "json",
           contentType : "application/json",
-          url : "/data.json",
-          success : function(json) {
-            self.tableData=json;
+          data: {pageSize:self.pageSize,pageNum:self.pageNum},
+          url : "/data",
+          success : function(data) {
+            self.tableData=data.content;
+            self.totalPage=data.total;
           },
           error : function(json) {
             self.$message.error('加载失败');

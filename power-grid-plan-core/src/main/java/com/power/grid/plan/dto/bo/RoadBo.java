@@ -43,6 +43,8 @@ public class RoadBo {
     @JsonProperty("price")
     private Double price;
 
+    public RoadBo() {
+    }
 
     public RoadBo(Long id, Long startNodeId, Long endNodeId, Double distance, Double price) {
         this.id = id;

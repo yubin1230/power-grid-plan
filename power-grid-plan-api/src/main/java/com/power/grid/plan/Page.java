@@ -9,7 +9,7 @@ import java.util.List;
  * 版本（@version 1.0）
  * 创建、开发日期（@date 2020/8/12 15:55）
  **/
-public class Page<T>implements Serializable {
+public class Page<T> implements Serializable {
     private static final long serialVersionUID = -7525190265598014595L;
 
 
@@ -24,12 +24,11 @@ public class Page<T>implements Serializable {
     private Integer pageSize = 100;
 
     private Integer pages;
-    private Long total;
+    private Integer total;
     private List<T> content;
 
     public Page() {
     }
-
 
 
     public Integer getPageSize() {
@@ -48,11 +47,11 @@ public class Page<T>implements Serializable {
         this.pages = pages;
     }
 
-    public Long getTotal() {
+    public Integer getTotal() {
         return total;
     }
 
-    public void setTotal(Long total) {
+    public void setTotal(Integer total) {
         this.total = total;
     }
 

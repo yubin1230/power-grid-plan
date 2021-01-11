@@ -1,4 +1,4 @@
-package com.power.grid.plan.util;
+package com.power.grid.plan.service.coordinate;
 
 
 import com.google.common.collect.Lists;
@@ -126,7 +126,7 @@ public class LuceneSpatial {
     /**
      * 地理位置搜索
      */
-    public List<NodeBo> search(NodeBo node, double radius) throws IOException {
+    public List<NodeBo> search(NodeBo node, double radius, int num) throws IOException {
         IndexReader indexReader = DirectoryReader.open(directory);
         IndexSearcher indexSearcher = new IndexSearcher(indexReader);
         /*
@@ -143,7 +143,7 @@ public class LuceneSpatial {
         /*
          * 根据命中点与当前位置坐标点的距离远近降序排,距离数字小的排在前面,false表示降序,true表示升序
          * */
-        Sort distSort = new Sort(valueSource.getSortField(true)).rewrite(indexSearcher);
+        Sort distSort = new Sort(valueSource.getSortField(false)).rewrite(indexSearcher);
 
 
         /*
@@ -152,13 +152,15 @@ public class LuceneSpatial {
         SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects,
                 ctx.getShapeFactory().circle(pt, DistanceUtils.dist2Degrees(radius, DistanceUtils.EARTH_MEAN_RADIUS_KM)));
         Query query = strategy.makeQuery(args);
-        TopDocs topDocs = indexSearcher.search(query, 50000, distSort);
+        TopDocs topDocs = indexSearcher.search(query, num, distSort);
         /*
          * 输出命中结果
          * */
         List<NodeBo> nodeBoList = transNodeList(topDocs, indexSearcher, args.getShape().getCenter());
 
         indexReader.close();
+
+        LOG.info("位置检索完成，node：{}节点为中心，{}：公里范围内，检索到：{}个节点", node.getId(), radius, nodeBoList.size());
 
         return nodeBoList;
     }
@@ -176,38 +178,11 @@ public class LuceneSpatial {
             double latitude = Double.parseDouble(locations[1]);
             double distDEG = ctx.calcDistance(point, longitude, latitude);
             double juli = DistanceUtils.degrees2Dist(distDEG, DistanceUtils.EARTH_MEAN_RADIUS_KM);
-            LOG.info("docId:{},nodeId:{},longitude:{},latitude{},distance:{}KM", docId, nodeId, longitude, latitude, juli);
+//            LOG.info("docId:{},nodeId:{},longitude:{},latitude{},distance:{}KM", docId, nodeId, longitude, latitude, juli);
             nodeBoList.add(new NodeBo(nodeId, longitude, latitude));
         }
+
         return nodeBoList;
-    }
-
-    public static double GetDistance(double Lat1, double Long1, double Lat2, double Long2){
-        double Lat1r = ConvertDegreeToRadians(Lat1);
-        double Lat2r = ConvertDegreeToRadians(Lat2);
-        double Long1r = ConvertDegreeToRadians(Long1);
-        double Long2r = ConvertDegreeToRadians(Long2);
-
-        double R = 6378100; // Earth's radius (km)
-        double d = Math.acos(Math.sin(Lat1r) *
-                Math.sin(Lat2r) + Math.cos(Lat1r) *
-                Math.cos(Lat2r) *
-                Math.cos(Long2r-Long1r)) * R;
-        return d;
-    }
-
-    private static double ConvertDegreeToRadians(double degrees){
-        return (Math.PI/180)*degrees;
-    }
-
-    public static void main(String[] args) {
-
-        double lng1=114.029055;
-        double lat1=22.530542;
-        double lng2=114.099164;
-        double lat2=22.570018;
-        System.out.println(GetDistance(lat1,lng1,lat2,lng2));
-
     }
 
 

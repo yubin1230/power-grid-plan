@@ -1,9 +1,13 @@
 package com.power.grid.plan.service.impl;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.power.grid.plan.dto.bo.HandleBo;
 import com.power.grid.plan.dto.bo.RoadBo;
 import com.power.grid.plan.dto.bo.RoadHandleBo;
+import com.power.grid.plan.dto.bo.WalkBo;
 import com.power.grid.plan.exception.DeadCircleException;
+import com.power.grid.plan.exception.UnableArriveException;
 import com.power.grid.plan.service.CalculateService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,8 +52,8 @@ public class CalculateServiceImpl implements CalculateService {
     @Override
     public Map<Long, RoadHandleBo> initProbability(List<RoadBo> roadBoList) {
         Map<Long, RoadHandleBo> roadHandleBoMap = new HashMap<>();
-        Map<Long, List<RoadBo>> startNodeMap = roadBoList.stream().collect(Collectors.groupingBy(RoadBo::getStartNodeId));
-        Map<Long, List<RoadBo>> endNodeMap = roadBoList.stream().collect(Collectors.groupingBy(RoadBo::getEndNodeId));
+        Map<Long, List<RoadBo>> startNodeMap = roadBoList.parallelStream().collect(Collectors.groupingBy(RoadBo::getStartNodeId));
+        Map<Long, List<RoadBo>> endNodeMap = roadBoList.parallelStream().collect(Collectors.groupingBy(RoadBo::getEndNodeId));
         Map<Long, List<RoadBo>> nodeMap = new HashMap<>();
         Set<Long> nodeIdSet = new HashSet<>();
         nodeIdSet.addAll(startNodeMap.keySet());
@@ -93,72 +97,96 @@ public class CalculateServiceImpl implements CalculateService {
     public HandleBo handle(Long start, Long end, Map<Long, RoadHandleBo> roadHandleBoMap) {
         HandleBo handleBo = new HandleBo();
         LinkedList<Long> processedIds = new LinkedList<>();
+        Set<Long> deadIds = new HashSet<>();
         Double sumPrice = 0.0;
         processedIds.add(start);
+        Long walk = start;
         while (true) {
-            RoadHandleBo roadHandleBo = roadHandleBoMap.get(start);
-            start = roulette(roadHandleBo, processedIds);
-            sumPrice += roadHandleBo.getSumPrice().get(start);
-            processedIds.add(start);
-            if (start.equals(end)) {
+            RoadHandleBo roadHandleBo = roadHandleBoMap.get(walk);
+            WalkBo walkBo = roulette(roadHandleBo, processedIds, deadIds);
+            if (walkBo.isDead()) {
+                processedIds.remove(walk);
+                deadIds.add(walk);
+                walk = processedIds.getLast();
+                //减去与上一个距离
+                sumPrice -= roadHandleBo.getSumPrice().get(walk);
+            } else {
+                walk = walkBo.getNext();
+                sumPrice += roadHandleBo.getSumPrice().get(walk);
+                processedIds.add(walk);
+            }
+            if (walk.equals(start) && deadIds.containsAll(roadHandleBoMap.get(start).getProbability().keySet())) {
+                throw new UnableArriveException("开始、结束节点无法到达");
+            }
+
+            if (walk.equals(end)) {
                 break;
             }
         }
         handleBo.setHandlePath(processedIds);
         handleBo.setSumPrice(sumPrice);
-        LOG.info("获取到最佳路径：{}", handleBo);
         return handleBo;
     }
 
-    private Long roulette(RoadHandleBo roadHandleBo, LinkedList<Long> processedIds) {
+    private WalkBo roulette(RoadHandleBo roadHandleBo, LinkedList<Long> processedIds, Set<Long> deadIds) {
         Map<Long, Double> probability = roadHandleBo.getProbability();
         Map<Long, Double> sumPrice = roadHandleBo.getSumPrice();
         List<Long> keyList = new ArrayList<>(probability.keySet());
-        //轮盘赌，current为当前城市标号
+
+        //无下一节点或下一节点在已行走路线中
+        Set<Long> noProcessedIds = Sets.newHashSet(processedIds);
+        noProcessedIds.addAll(deadIds);
+        if (noProcessedIds.containsAll(probability.keySet())) {
+            return new WalkBo(true);
+        }
+
+
+        //删除已经处理过的节点
+        noProcessedIds.forEach(no -> {
+            if (keyList.contains(no)) {
+                keyList.remove(no);
+            }
+        });
+
+        //轮盘赌
         double sum = 0;
         Long nodeId = keyList.get(0);
-        double a = sum_single_possible(roadHandleBo, processedIds);
-        while (sum < loop / keyList.size()) {
+        //轮盘赌初始因子
+        double a = sum_single_possible(probability, sumPrice, keyList);
+
+        int maxSum = loop / keyList.size();
+        while (sum < maxSum) {
             Random random = new Random();
             int index = random.nextInt(keyList.size());
             nodeId = keyList.get(index);
-            if (!processedIds.contains(nodeId)) {
-                //假如该数不在数组里，则令概率增加
-                double n = 1.0 / sumPrice.get(nodeId);
-                n = Math.pow(n, beta);
-                double t = probability.get(nodeId);
-                t = Math.pow(t, alpha);
-                sum = sum + n * t * 1.0 / a;
-            }
+            double n = 1.0 / sumPrice.get(nodeId);
+            n = Math.pow(n, beta);
+            double t = probability.get(nodeId);
+            t = Math.pow(t, alpha);
+            sum = sum + n * t * 1.0 / a;
+
         }
-        return nodeId;
+        return new WalkBo(nodeId);
 
     }
 
-    private double sum_single_possible(RoadHandleBo roadHandleBo, LinkedList<Long> processedIds) {
+    private double sum_single_possible(Map<Long, Double> probability, Map<Long, Double> sumPrice, List<Long> keyList) {
         //根据公式计算概率
-        Map<Long, Double> probability = roadHandleBo.getProbability();
-        Map<Long, Double> sumPrice = roadHandleBo.getSumPrice();
         double sum = 0;
-        for (Long nodeId : probability.keySet()) {
-            if (!processedIds.contains(nodeId)) {
-                double a = 1.0 / sumPrice.get(nodeId);
-                a = Math.pow(a, beta);
-                double b = probability.get(nodeId);
-                b = Math.pow(b, alpha);
-                sum = sum + a * b;
-            }
-        }
-        //死循环异常
-        if (sum == 0) {
-            throw new DeadCircleException("计算死循环，重新计算");
+        for (Long nodeId : keyList) {
+            double a = 1.0 / sumPrice.get(nodeId);
+            a = Math.pow(a, beta);
+            double b = probability.get(nodeId);
+            b = Math.pow(b, alpha);
+            sum = sum + a * b;
+
         }
         return sum;
     }
 
 
     @Override
-    public void releasePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, HandleBo handleBo) {
+    public  void releasePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, HandleBo handleBo) {
 
         LinkedList<Long> handlePath = handleBo.getHandlePath();
 

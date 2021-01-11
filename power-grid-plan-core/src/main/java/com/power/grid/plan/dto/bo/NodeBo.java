@@ -34,4 +34,18 @@ public class NodeBo {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
+    public NodeBo(double longitude, double latitude) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
+    @Override
+    public String toString() {
+        return "NodeBo{" +
+                "id=" + id +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                '}';
+    }
 }
