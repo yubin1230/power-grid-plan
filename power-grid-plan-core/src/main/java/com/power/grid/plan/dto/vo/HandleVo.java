@@ -19,5 +19,5 @@ public class HandleVo {
     /**
     * 总造价
     */
-    private Double sumPrice;
+    private String sumPrice;
 }

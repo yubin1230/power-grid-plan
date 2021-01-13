@@ -25,8 +25,8 @@ public class ThreadPoolConfiguration {
     public static final String PREFIX = "threads";
     private static final Logger LOGGER = LogManager.getLogger(ThreadPoolConfiguration.class);
     private static final int CORE_SIZE = Runtime.getRuntime().availableProcessors();
-    private static final int DEFAULT_CORE_SIZE = 10;
-    private static final int DEFAULT_MAX_SIZE = 15;
+    private static final int DEFAULT_CORE_SIZE = 3;
+    private static final int DEFAULT_MAX_SIZE = 3;
     private static final int DEFAULT_QUEUE_SIZE = 100;
     private int coreSize;
     private int maxSize;

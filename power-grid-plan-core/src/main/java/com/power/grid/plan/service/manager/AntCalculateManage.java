@@ -2,7 +2,6 @@ package com.power.grid.plan.service.manager;
 
 import com.power.grid.plan.dto.bo.HandleBo;
 import com.power.grid.plan.dto.bo.RoadHandleBo;
-import com.power.grid.plan.exception.DeadCircleException;
 import com.power.grid.plan.service.CalculateService;
 import lombok.Data;
 import org.apache.logging.log4j.LogManager;
@@ -10,8 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 蚂蚁计算管理类
@@ -41,7 +39,7 @@ public class AntCalculateManage {
 
     private long end;
 
-    private volatile HandleBo bestHandleBo;
+    private volatile HandleBo bestHandleBo = new HandleBo();
 
 
     public AntCalculateManage() {
@@ -58,9 +56,12 @@ public class AntCalculateManage {
 
     public HandleBo handle() {
 
+        long startTime = System.currentTimeMillis();
+        Set<Long> deadIds = new HashSet<>();
         for (int j = 0; j < antNum; j++) {
             //计算路径
-            HandleBo boCalculate = calculateService.handle(start, end, roadHandleBoMap);
+//            Map<Long, RoadHandleBo> currentMap=new HashMap<>(roadHandleBoMap);
+            HandleBo boCalculate = calculateService.handle(start, end, roadHandleBoMap, deadIds);
 
             //已选择路径，不再释放信息素，重新计算
             if (handleBoList.contains(boCalculate)) {
@@ -74,6 +75,8 @@ public class AntCalculateManage {
         }
         //挥发信息素
         volatilizePheromone();
+        long endTime = System.currentTimeMillis();
+        System.out.println(Thread.currentThread().getName() + "计算50只蚂蚁计算耗时：" + (endTime - startTime) / 1000 + "秒");
         return bestHandleBo;
     }
 

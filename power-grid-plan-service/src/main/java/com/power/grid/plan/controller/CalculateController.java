@@ -29,18 +29,21 @@ public class CalculateController {
     @GetMapping(value = "/calculate")
     @ResponseBody
     public List<HandleVo> calculate(long start, long end) {
-        List<HandleVo> HandleVoList = new ArrayList<>();;
+        List<HandleVo> HandleVoList = new ArrayList<>();
+        long startTime = System.currentTimeMillis();
         try {
             List<HandleBo> handleBoList = gridPlanManage.calculate(start, end).stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList());
             handleBoList.forEach(s -> {
                 HandleVo vo = new HandleVo();
-                vo.setSumPrice(s.getSumPrice());
+                vo.setSumPrice(String.format("%.3f", s.getSumPrice()));
                 vo.setHandlePath(StringUtils.collectionToDelimitedString(s.getHandlePath(), "-"));
                 HandleVoList.add(vo);
             });
         } catch (Exception e) {
             LOG.error("计算异常",e);
         }
+        long endTime = System.currentTimeMillis();
+        System.out.println("总计算耗时：" + (endTime - startTime) / 1000 + "秒");
         return HandleVoList;
     }
 

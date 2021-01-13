@@ -79,8 +79,10 @@ public class GridPlanManage {
         List<HandleBo> handleBoList = new ArrayList<>();
 
         for (int i = 0; i < PATH_NUM; i++) {
+            antCalculateManage.setBestHandleBo(new HandleBo());
             HandleBo bo = calculateBestPath(start, end, handleBoList);
             handleBoList.add(bo);
+            System.out.println("第"+PATH_NUM+"计算完成");
         }
 
         return handleBoList;
@@ -92,7 +94,7 @@ public class GridPlanManage {
         //初始化概率
         Map<Long, RoadHandleBo> roadHandleBoMap = calculateService.initProbability(roadBoList);
         List<AntCalculateTask> antCalculateTaskList = IntStream.range(0, LOOP).mapToObj(s -> {
-            antCalculateManage.initAntCalculateManage(handleBoList, roadHandleBoMap, start, end, new HandleBo(), ANT_NUM);
+            antCalculateManage.initAntCalculateManage(handleBoList, roadHandleBoMap, start, end, antCalculateManage.getBestHandleBo(), ANT_NUM);
             return new AntCalculateTask(antCalculateManage);
         }).collect(Collectors.toList());
 
@@ -100,7 +102,8 @@ public class GridPlanManage {
 
 //        antCalculateManage.initAntCalculateManage(handleBoList, roadHandleBoMap, start, end, new HandleBo(), ANT_NUM);
 //        bo = new AntCalculateTask(antCalculateManage).call();
-        for (Future<HandleBo> future : futureList) {
+        for (int i = 0; i < LOOP; i++) {
+            Future<HandleBo> future=futureList.get(i);
             if (future.isCancelled() || Objects.isNull(future.get())) {
                 continue;
             }

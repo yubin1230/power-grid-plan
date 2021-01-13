@@ -28,8 +28,7 @@ public class HandleBo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HandleBo handleBo = (HandleBo) o;
-        return Objects.equals(handlePath, handleBo.handlePath) &&
-                Objects.equals(sumPrice, handleBo.sumPrice);
+        return Objects.equals(handlePath, handleBo.handlePath);
     }
 
     @Override

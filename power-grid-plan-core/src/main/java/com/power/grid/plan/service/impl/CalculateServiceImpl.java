@@ -14,7 +14,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +50,8 @@ public class CalculateServiceImpl implements CalculateService {
      */
     private int loop = 15;
 
+//    private volatile Set<Long> deadIds=new CopyOnWriteArraySet<>();
+
 
     @Override
     public Map<Long, RoadHandleBo> initProbability(List<RoadBo> roadBoList) {
@@ -71,16 +75,19 @@ public class CalculateServiceImpl implements CalculateService {
             nodeMap.put(nodeId, node);
         });
         nodeMap.forEach((k, v) -> {
-            double sumPrice = v.stream().mapToDouble(n -> n.getDistance() * n.getPrice()).sum();
+//            double sumPrice = v.stream().mapToDouble(n -> n.getDistance() * n.getPrice()).sum();
             Map<Long, Double> probabilityMap = new HashMap<>();
             Map<Long, Double> sumPriceMap = new HashMap<>();
             v.forEach(n -> {
+                BigDecimal d = new BigDecimal(Double.toString(n.getDistance()));
+                BigDecimal p = new BigDecimal(Double.toString(n.getPrice()));
+                double price=d.multiply(p).doubleValue();
                 if (k.equals(n.getStartNodeId())) {
-                    probabilityMap.put(n.getEndNodeId(), n.getDistance() * n.getPrice() / sumPrice);
-                    sumPriceMap.put(n.getEndNodeId(), n.getDistance() * n.getPrice());
+                    probabilityMap.put(n.getEndNodeId(), 1.0 / v.size());
+                    sumPriceMap.put(n.getEndNodeId(), price);
                 } else {
-                    probabilityMap.put(n.getStartNodeId(), n.getDistance() * n.getPrice() / sumPrice);
-                    sumPriceMap.put(n.getStartNodeId(), n.getDistance() * n.getPrice());
+                    probabilityMap.put(n.getStartNodeId(), 1.0 / v.size());
+                    sumPriceMap.put(n.getStartNodeId(), price);
                 }
             });
             RoadHandleBo ro = new RoadHandleBo();
@@ -93,20 +100,31 @@ public class CalculateServiceImpl implements CalculateService {
         return roadHandleBoMap;
     }
 
+    public static void main(String[] args) {
+        double a=0.05;
+        double b=2.5;
+        double c=a*b;
+        double d=c+0.189;
+        System.out.println(d);
+    }
+
     @Override
-    public HandleBo handle(Long start, Long end, Map<Long, RoadHandleBo> roadHandleBoMap) {
+    public HandleBo handle(Long start, Long end, Map<Long, RoadHandleBo> roadHandleBoMap, Set<Long> deadIds) {
+        long startTime = System.currentTimeMillis();
         HandleBo handleBo = new HandleBo();
         LinkedList<Long> processedIds = new LinkedList<>();
-        Set<Long> deadIds = new HashSet<>();
         Double sumPrice = 0.0;
         processedIds.add(start);
         Long walk = start;
         while (true) {
+//            Set<Long> deadIdSet=getCurrentDeadIdSet();
             RoadHandleBo roadHandleBo = roadHandleBoMap.get(walk);
             WalkBo walkBo = roulette(roadHandleBo, processedIds, deadIds);
             if (walkBo.isDead()) {
                 processedIds.remove(walk);
+
                 deadIds.add(walk);
+
                 walk = processedIds.getLast();
                 //减去与上一个距离
                 sumPrice -= roadHandleBo.getSumPrice().get(walk);
@@ -125,6 +143,8 @@ public class CalculateServiceImpl implements CalculateService {
         }
         handleBo.setHandlePath(processedIds);
         handleBo.setSumPrice(sumPrice);
+        long endTime = System.currentTimeMillis();
+//        System.out.println(Thread.currentThread().getName() + "***222计算耗时：" + (endTime - startTime) / 1000 + "秒");
         return handleBo;
     }
 
@@ -142,8 +162,9 @@ public class CalculateServiceImpl implements CalculateService {
 
 
         //删除已经处理过的节点
+        Set<Long> keySet = new HashSet<>(keyList);
         noProcessedIds.forEach(no -> {
-            if (keyList.contains(no)) {
+            if (keySet.contains(no)) {
                 keyList.remove(no);
             }
         });
@@ -184,9 +205,19 @@ public class CalculateServiceImpl implements CalculateService {
         return sum;
     }
 
+    //多线程贡献死亡节点
+//    private Set<Long> getCurrentDeadIdSet(){
+//        Set<Long> deadIdSet=new HashSet<>();
+//        Iterator<Long> iterator=deadIds.iterator();
+//        while (iterator.hasNext()){
+//            deadIdSet.add(iterator.next());
+//        }
+//        return deadIdSet;
+//    }
+
 
     @Override
-    public  void releasePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, HandleBo handleBo) {
+    public void releasePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, HandleBo handleBo) {
 
         LinkedList<Long> handlePath = handleBo.getHandlePath();
 
@@ -209,4 +240,8 @@ public class CalculateServiceImpl implements CalculateService {
             });
         });
     }
+
+//    private synchronized void addDeadId(Long dead){
+//        deadIds.add(dead);
+//    }
 }
