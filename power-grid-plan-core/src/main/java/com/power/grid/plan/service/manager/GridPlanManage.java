@@ -52,7 +52,7 @@ public class GridPlanManage {
     /**
      * 返回路径数量
      */
-    private static final int PATH_NUM = 3;
+    private static final int PATH_NUM = 1;
 
     /**
      * 以直线距离1/2为半径，向外延伸距离，单位KM
@@ -82,7 +82,7 @@ public class GridPlanManage {
             antCalculateManage.setBestHandleBo(new HandleBo());
             HandleBo bo = calculateBestPath(start, end, handleBoList);
             handleBoList.add(bo);
-            System.out.println("第"+PATH_NUM+"计算完成");
+            System.out.println("第"+(i+1)+"计算完成");
         }
 
         return handleBoList;
@@ -98,7 +98,7 @@ public class GridPlanManage {
             return new AntCalculateTask(antCalculateManage);
         }).collect(Collectors.toList());
 
-        List<Future<HandleBo>> futureList = executorService.invokeAll(antCalculateTaskList, 10, TimeUnit.MINUTES);
+        List<Future<HandleBo>> futureList = executorService.invokeAll(antCalculateTaskList, 30, TimeUnit.MINUTES);
 
 //        antCalculateManage.initAntCalculateManage(handleBoList, roadHandleBoMap, start, end, new HandleBo(), ANT_NUM);
 //        bo = new AntCalculateTask(antCalculateManage).call();
@@ -114,7 +114,7 @@ public class GridPlanManage {
         return bo;
     }
 
-    private List<RoadBo> getRoadBoList(Long start, Long end) throws IOException {
+    public List<RoadBo> getRoadBoList(Long start, Long end) throws IOException {
         //加载所有路段信息
         List<RoadBo> roadBoList = baseDataInit.getRoadBoList();
 
