@@ -14,6 +14,7 @@ import com.power.grid.plan.service.thread.AntCalculateTask;
 import com.power.grid.plan.util.BaseDataInit;
 import com.power.grid.plan.service.coordinate.LuceneSpatial;
 import lombok.Data;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -49,10 +50,6 @@ public class GridPlanManage {
      */
     private static final int LOOP = 100;
 
-    /**
-     * 返回路径数量
-     */
-    private static final int PATH_NUM = 1;
 
     /**
      * 以直线距离1/2为半径，向外延伸距离，单位KM
@@ -76,42 +73,41 @@ public class GridPlanManage {
 
     public List<HandleBo> calculate(Long start, Long end) throws IOException, InterruptedException, ExecutionException {
 
-        List<HandleBo> handleBoList = new ArrayList<>();
-
-        for (int i = 0; i < PATH_NUM; i++) {
-            antCalculateManage.setBestHandleBo(new HandleBo());
-            HandleBo bo = calculateBestPath(start, end, handleBoList);
-            handleBoList.add(bo);
-            System.out.println("第"+(i+1)+"计算完成");
-        }
-
-        return handleBoList;
+        return calculateBestPath(start, end);
     }
 
-    public HandleBo calculateBestPath(Long start, Long end, List<HandleBo> handleBoList) throws IOException, InterruptedException, ExecutionException {
-        HandleBo bo = new HandleBo();
+    public List<HandleBo> calculateBestPath(Long start, Long end) throws IOException, InterruptedException, ExecutionException {
+        List<HandleBo> handleBoList=new ArrayList<>();
+        Set<HandleBo> handleBoSet=new HashSet<>();
         List<RoadBo> roadBoList = getRoadBoList(start, end);
         //初始化概率
         Map<Long, RoadHandleBo> roadHandleBoMap = calculateService.initProbability(roadBoList);
         List<AntCalculateTask> antCalculateTaskList = IntStream.range(0, LOOP).mapToObj(s -> {
-            antCalculateManage.initAntCalculateManage(handleBoList, roadHandleBoMap, start, end, antCalculateManage.getBestHandleBo(), ANT_NUM);
+            antCalculateManage.initAntCalculateManage(roadHandleBoMap, start, end, ANT_NUM);
             return new AntCalculateTask(antCalculateManage);
         }).collect(Collectors.toList());
 
-        List<Future<HandleBo>> futureList = executorService.invokeAll(antCalculateTaskList, 30, TimeUnit.MINUTES);
+        List<Future<List<HandleBo>>> futureList = executorService.invokeAll(antCalculateTaskList, 30, TimeUnit.MINUTES);
 
 //        antCalculateManage.initAntCalculateManage(handleBoList, roadHandleBoMap, start, end, new HandleBo(), ANT_NUM);
 //        bo = new AntCalculateTask(antCalculateManage).call();
         for (int i = 0; i < LOOP; i++) {
-            Future<HandleBo> future=futureList.get(i);
+            Future<List<HandleBo>> future = futureList.get(i);
             if (future.isCancelled() || Objects.isNull(future.get())) {
                 continue;
             }
-            if (future.get().getSumPrice() < bo.getSumPrice()) {
-                bo = future.get();
+
+            if (CollectionUtils.isNotEmpty(future.get())) {
+                handleBoSet.addAll(future.get());
+                if(handleBoSet.size()>3){
+                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0,3);
+                }else{
+                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList());
+                }
+
             }
         }
-        return bo;
+        return handleBoList;
     }
 
     public List<RoadBo> getRoadBoList(Long start, Long end) throws IOException {

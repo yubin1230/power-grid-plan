@@ -4,12 +4,16 @@ import com.power.grid.plan.dto.bo.HandleBo;
 import com.power.grid.plan.dto.bo.RoadHandleBo;
 import com.power.grid.plan.service.CalculateService;
 import lombok.Data;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.stream.Collectors;
 
 /**
  * 蚂蚁计算管理类
@@ -31,67 +35,86 @@ public class AntCalculateManage {
     private int antNum;
 
 
-    private List<HandleBo> handleBoList;
-
     private volatile Map<Long, RoadHandleBo> roadHandleBoMap;
 
     private long start;
 
     private long end;
 
-    private volatile HandleBo bestHandleBo = new HandleBo();
+    private volatile List<HandleBo> handleBoList = Collections.synchronizedList(new ArrayList<>());
 
 
     public AntCalculateManage() {
     }
 
-    public void initAntCalculateManage(List<HandleBo> handleBoList, Map<Long, RoadHandleBo> roadHandleBoMap, long start, long end, HandleBo bestHandleBo, int antNum) {
-        this.handleBoList = handleBoList;
+    public void initAntCalculateManage(Map<Long, RoadHandleBo> roadHandleBoMap, long start, long end, int antNum) {
         this.roadHandleBoMap = roadHandleBoMap;
         this.start = start;
         this.end = end;
-        this.bestHandleBo = bestHandleBo;
         this.antNum = antNum;
     }
 
-    public HandleBo handle() {
-
+    public List<HandleBo> handle() {
         long startTime = System.currentTimeMillis();
         Set<Long> deadIds = new HashSet<>();
         for (int j = 0; j < antNum; j++) {
             //计算路径
 //            Map<Long, RoadHandleBo> currentMap=new HashMap<>(roadHandleBoMap);
             HandleBo boCalculate = calculateService.handle(start, end, roadHandleBoMap, deadIds);
+            System.out.println(Thread.currentThread().getName() + "死亡节点数量：" + deadIds.size() + "个");
 
             //已选择路径，不再释放信息素，重新计算
-            if (handleBoList.contains(boCalculate)) {
-                LOG.info("已包含最优路径，重新计算。");
-                j--;
-                continue;
-            }
-            setBestHandle(boCalculate);
+//            if (handleBoList.contains(boCalculate)) {
+//                LOG.info("已包含最优路径，重新计算。");
+//                j--;
+//                continue;
+//            }
+            List<HandleBo> currentList = setBestHandle(boCalculate);
             //释放信息素
-            releasePheromone();
+            releasePheromone(currentList);
         }
         //挥发信息素
         volatilizePheromone();
+        //挥发回路信息素，加快收敛
+//        volatilizePheromone(deadIds);
+
         long endTime = System.currentTimeMillis();
         System.out.println(Thread.currentThread().getName() + "计算50只蚂蚁计算耗时：" + (endTime - startTime) / 1000 + "秒");
-        return bestHandleBo;
+        return handleBoList;
     }
 
-    private synchronized void setBestHandle(HandleBo bo) {
-        if (bo.getSumPrice() < bestHandleBo.getSumPrice()) {
-            LOG.info("获取到最佳路径：{}", bo);
-            bestHandleBo = bo;
+    private List<HandleBo> setBestHandle(HandleBo bo) {
+        List<HandleBo> currentList = new ArrayList<>(handleBoList);
+        if (currentList.size() <= 3) {
+            currentList.add(bo);
+            synchronized (this) {
+                handleBoList = currentList;
+            }
+            return currentList;
         }
+        for(HandleBo handleBo:currentList){
+            if (bo.getSumPrice() <= handleBo.getSumPrice() && !currentList.contains(bo)) {
+                currentList.add(bo);
+                break;
+            }
+        }
+
+        currentList = currentList.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0, 3);
+        synchronized (this) {
+            handleBoList = currentList;
+        }
+        return currentList;
     }
 
-    private synchronized void releasePheromone() {
-        calculateService.releasePheromone(roadHandleBoMap, bestHandleBo);
+    private synchronized void releasePheromone(List<HandleBo> handleBoList) {
+        calculateService.releasePheromone(roadHandleBoMap, handleBoList);
     }
 
     private synchronized void volatilizePheromone() {
         calculateService.volatilizePheromone(roadHandleBoMap);
+    }
+
+    private synchronized void volatilizePheromone(Long deadId) {
+        calculateService.volatilizePheromone(roadHandleBoMap,deadId);
     }
 }

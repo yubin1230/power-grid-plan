@@ -55,7 +55,8 @@ public class Roulette {
         double a = sum_single_possible(probability, sumPrice, keyList);
 
         int maxSum = loop / keyList.size();
-        while (sum < maxSum) {
+        int i=1;
+        while (sum < maxSum && i<Math.pow(keyList.size(), 2)) {
             Random random = new Random();
             int index = random.nextInt(keyList.size());
             nodeId = keyList.get(index);
@@ -64,7 +65,7 @@ public class Roulette {
             double t = probability.get(nodeId);
             t = Math.pow(t, alpha);
             sum = sum + n * t * 1.0 / a;
-
+            i++;
         }
         return new WalkBo(nodeId);
 

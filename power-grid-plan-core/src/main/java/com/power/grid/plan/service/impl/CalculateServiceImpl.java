@@ -111,10 +111,11 @@ public class CalculateServiceImpl implements CalculateService {
         while (true) {
 //            Set<Long> deadIdSet=getCurrentDeadIdSet();
             RoadHandleBo roadHandleBo = roadHandleBoMap.get(walk);
-            Set<Long> noProcessedIds=new HashSet<>(processedIds);
+            Set<Long> noProcessedIds = new HashSet<>(processedIds);
             noProcessedIds.addAll(deadIds);
             WalkBo walkBo = roulette.calculate(roadHandleBo, noProcessedIds);
             if (walkBo.isDead()) {
+
                 processedIds.remove(walk);
 
                 deadIds.add(walk);
@@ -143,7 +144,6 @@ public class CalculateServiceImpl implements CalculateService {
     }
 
 
-
     //多线程贡献死亡节点
 //    private Set<Long> getCurrentDeadIdSet(){
 //        Set<Long> deadIdSet=new HashSet<>();
@@ -156,18 +156,27 @@ public class CalculateServiceImpl implements CalculateService {
 
 
     @Override
-    public void releasePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, HandleBo handleBo) {
+    public void releasePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, List<HandleBo> handleBoList) {
 
-        LinkedList<Long> handlePath = handleBo.getHandlePath();
+        for (int i = 0; i < handleBoList.size(); i++) {
 
-        Double sumPrice = handleBo.getSumPrice();
+            LinkedList<Long> handlePath = handleBoList.get(i).getHandlePath();
 
-        for (int i = 0; i < handlePath.size() - 1; i++) {
-            RoadHandleBo roadHandleBo = roadHandleBoMap.get(handlePath.get(i));
-            Map<Long, Double> probability = roadHandleBo.getProbability();
-            Double probabilityNode = probability.get(handlePath.get(i + 1)) + 1.0 / sumPrice;
-            probability.put(handlePath.get(i + 1), probabilityNode);
+            Double sumPrice = handleBoList.get(i).getSumPrice();
+
+            for (int j = 0; j < handlePath.size() - 1; j++) {
+                RoadHandleBo roadHandleBo = roadHandleBoMap.get(handlePath.get(j));
+                Map<Long, Double> probability = roadHandleBo.getProbability();
+                if(Objects.isNull(probability)){
+                    System.out.println(handlePath.get(j));
+                    System.out.println(roadHandleBo);
+                }
+                Double probabilityNode = probability.get(handlePath.get(j + 1)) + (1.0 / sumPrice)*(handleBoList.size()-i);
+                probability.put(handlePath.get(j + 1), probabilityNode);
+            }
         }
+
+
     }
 
     @Override
@@ -178,6 +187,16 @@ public class CalculateServiceImpl implements CalculateService {
                 probability.put(k, v * rho);
             });
         });
+    }
+
+    @Override
+    public void volatilizePheromone(Map<Long, RoadHandleBo> roadHandleBoMap,Long deadId) {
+//        deadIds.forEach(bo -> {
+            Map<Long, Double> probability = roadHandleBoMap.get(deadId).getProbability();
+            probability.forEach((k, v) -> {
+                probability.put(k, v * rho*0.6);
+            });
+//        });
     }
 
 //    private synchronized void addDeadId(Long dead){

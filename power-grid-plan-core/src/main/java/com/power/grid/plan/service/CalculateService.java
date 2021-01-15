@@ -35,9 +35,9 @@ public interface CalculateService {
     /**
      * 释放信息素
      * @param roadHandleBoMap 运行信息
-     * @param handleBo        已处理信息
+     * @param handleBoList        已处理信息
      */
-    void releasePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, HandleBo handleBo);
+    void releasePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, List<HandleBo> handleBoList);
 
 
     /**
@@ -45,4 +45,10 @@ public interface CalculateService {
      * @param roadHandleBoMap 运行信息
      */
     void volatilizePheromone(Map<Long, RoadHandleBo> roadHandleBoMap);
+
+    /**
+     * 回路节点挥发信息素
+     * @param roadHandleBoMap 运行信息
+     */
+    void volatilizePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, Long deadId);
 }

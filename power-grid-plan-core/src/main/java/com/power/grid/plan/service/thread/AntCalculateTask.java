@@ -4,6 +4,8 @@ import com.power.grid.plan.dto.bo.HandleBo;
 import com.power.grid.plan.service.manager.AntCalculateManage;
 import org.springframework.lang.NonNull;
 
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
@@ -11,7 +13,7 @@ import java.util.concurrent.Callable;
  * @author yubin
  * @date 2021/1/10 13:57
  */
-public class AntCalculateTask implements Callable<HandleBo> {
+public class AntCalculateTask implements Callable<List<HandleBo>> {
 
     private AntCalculateManage antCalculateManage;
 
@@ -21,10 +23,7 @@ public class AntCalculateTask implements Callable<HandleBo> {
     }
 
     @Override
-    public HandleBo call() {
-        if (Thread.interrupted()) {
-            return new HandleBo();
-        }
+    public List<HandleBo> call() {
         return antCalculateManage.handle();
     }
 }
