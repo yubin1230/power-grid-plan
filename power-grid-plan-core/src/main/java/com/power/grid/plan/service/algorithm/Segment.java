@@ -12,6 +12,7 @@ import java.util.*;
  * @date 2021/1/14 0:48
  */
 @Component
+@Deprecated
 public class Segment {
 
     /**

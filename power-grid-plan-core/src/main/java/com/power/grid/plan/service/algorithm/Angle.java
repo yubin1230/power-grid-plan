@@ -8,6 +8,7 @@ import com.power.grid.plan.dto.bo.NodeBo;
  * @author yubin
  * @date 2021/1/14 20:58
  */
+@Deprecated
 public class Angle {
 
     /**

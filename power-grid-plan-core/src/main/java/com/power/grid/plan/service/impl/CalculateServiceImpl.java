@@ -1,5 +1,6 @@
 package com.power.grid.plan.service.impl;
 
+import com.power.grid.plan.Constants;
 import com.power.grid.plan.dto.bo.HandleBo;
 import com.power.grid.plan.dto.bo.RoadBo;
 import com.power.grid.plan.dto.bo.RoadHandleBo;
@@ -20,7 +21,6 @@ import java.util.stream.Collectors;
 
 /**
  * 计算实现类
- *
  * @author yubin
  * @date 2020/12/1 0:10
  */
@@ -36,13 +36,7 @@ public class CalculateServiceImpl implements CalculateService {
     @Resource
     private Roulette roulette;
 
-    /**
-     * 挥发因子
-     */
-    private double rho = 0.9;//信息素挥发因子
 
-
-//    private volatile Set<Long> deadIds=new CopyOnWriteArraySet<>();
 
 
     @Override
@@ -112,25 +106,13 @@ public class CalculateServiceImpl implements CalculateService {
         processedIds.add(start);
         processedIdSet.add(start);
         Long walk = start;
-        long startTime = System.currentTimeMillis();
         while (true) {
 
             RoadHandleBo roadHandleBo = roadHandleBoMap.get(walk);
-//            Set<Long> noProcessedIds = new HashSet<>(deadIds);
-//
-//            noProcessedIds.addAll(processedIds);
-            long startTime1 = System.currentTimeMillis() * 1000;
-            long startNanoTime = System.nanoTime(); // 纳秒
-            long start2 = startTime1 + (startNanoTime - startTime1 / 1000000 * 1000000) / 1000;
+
             WalkBo walkBo = roulette.calculate(roadHandleBo, deadIds, processedIdSet);
-            long endTime1 = System.currentTimeMillis() * 1000;
-            long endNanoTime = System.nanoTime(); // 纳秒
-            long end2 = endTime1 + (endNanoTime - endTime1 / 1000000 * 1000000) / 1000;
-//            System.out.println(Thread.currentThread().getName() + "单只蚂蚁路径耗时：" + (end2 - start2) + "微秒");
+
             if (walkBo.isDead()) {
-                startTime1 = System.currentTimeMillis() * 1000;
-                startNanoTime = System.nanoTime(); // 纳秒
-                start2 = startTime1 + (startNanoTime - startTime1 / 1000000 * 1000000) / 1000;
 
                 processedIds.remove(walk);
                 processedIdSet.remove(walk);
@@ -141,22 +123,11 @@ public class CalculateServiceImpl implements CalculateService {
                 //减去与上一个距离
                 sumPrice -= roadHandleBo.getSumPrice().get(walk);
 
-                endTime1 = System.currentTimeMillis() * 1000;
-                endNanoTime = System.nanoTime(); // 纳秒
-                end2 = endTime1 + (endNanoTime - endTime1 / 1000000 * 1000000) / 1000;
-//                System.out.println(Thread.currentThread().getName() + "死亡节点处理耗时：" + (end2 - start2) + "微秒");
             } else {
-                startTime1 = System.currentTimeMillis() * 1000;
-                startNanoTime = System.nanoTime(); // 纳秒
-                start2 = startTime1 + (startNanoTime - startTime1 / 1000000 * 1000000) / 1000;
                 walk = walkBo.getNext();
                 sumPrice += roadHandleBo.getSumPrice().get(walk);
                 processedIds.add(walk);
                 processedIdSet.add(walk);
-                endTime1 = System.currentTimeMillis() * 1000;
-                endNanoTime = System.nanoTime(); // 纳秒
-                end2 = endTime1 + (endNanoTime - endTime1 / 1000000 * 1000000) / 1000;
-//                System.out.println(Thread.currentThread().getName() + "成功节点处理耗时：" + (end2 - start2) + "微秒");
             }
             if (walk.equals(start) && deadIds.containsAll(roadHandleBoMap.get(start).getProbability().keySet())) {
                 throw new UnableArriveException("开始、结束节点无法到达");
@@ -168,21 +139,8 @@ public class CalculateServiceImpl implements CalculateService {
         }
         handleBo.setHandlePath(processedIds);
         handleBo.setSumPrice(sumPrice);
-        long endTime = System.currentTimeMillis();
-//        System.out.println(Thread.currentThread().getName() + "单只蚂蚁计算耗时：" + (endTime - startTime) + "毫秒");
         return handleBo;
     }
-
-
-    //多线程贡献死亡节点
-//    private Set<Long> getCurrentDeadIdSet(){
-//        Set<Long> deadIdSet=new HashSet<>();
-//        Iterator<Long> iterator=deadIds.iterator();
-//        while (iterator.hasNext()){
-//            deadIdSet.add(iterator.next());
-//        }
-//        return deadIdSet;
-//    }
 
 
     @Override
@@ -202,7 +160,7 @@ public class CalculateServiceImpl implements CalculateService {
                     continue;
                 }
                 Map<Long, Double> probability = roadHandleBo.getProbability();
-                Double probabilityNode = probability.get(handlePath.get(j + 1)) + 1/(sumPrice) ;
+                Double probabilityNode = probability.get(handlePath.get(j + 1)) + 1 / (sumPrice) * Constants.PHEROMONE_RELEASING_UNIT;
                 probability.put(handlePath.get(j + 1), probabilityNode);
             }
         }
@@ -215,24 +173,10 @@ public class CalculateServiceImpl implements CalculateService {
         roadHandleBoMap.values().forEach(bo -> {
             Map<Long, Double> probability = bo.getProbability();
             probability.forEach((k, v) -> {
-                probability.put(k, v * rho);
+                probability.put(k, v * Constants.RHO);
             });
         });
     }
-
-    @Override
-    public void volatilizePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, Long deadId) {
-//        deadIds.forEach(bo -> {
-        Map<Long, Double> probability = roadHandleBoMap.get(deadId).getProbability();
-        probability.forEach((k, v) -> {
-            probability.put(k, v * rho * 0.6);
-        });
-//        });
-    }
-
-//    private synchronized void addDeadId(Long dead){
-//        deadIds.add(dead);
-//    }
 
 
 }

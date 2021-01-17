@@ -1,5 +1,6 @@
 package com.power.grid.plan.service.thread;
 
+import com.power.grid.plan.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -27,7 +28,7 @@ public class ThreadPoolConfiguration {
     private static final int CORE_SIZE = Runtime.getRuntime().availableProcessors();
     private static final int DEFAULT_CORE_SIZE = 3;
     private static final int DEFAULT_MAX_SIZE = 3;
-    private static final int DEFAULT_QUEUE_SIZE = 400;
+    private static final int DEFAULT_QUEUE_SIZE = Constants.LOOP*3;
     private int coreSize;
     private int maxSize;
     private int queueSize;

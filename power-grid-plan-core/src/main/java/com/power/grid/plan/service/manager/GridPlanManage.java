@@ -3,6 +3,7 @@ package com.power.grid.plan.service.manager;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.power.grid.plan.Constants;
 import com.power.grid.plan.dto.bo.HandleBo;
 import com.power.grid.plan.dto.bo.NodeBo;
 import com.power.grid.plan.dto.bo.RoadBo;
@@ -40,21 +41,7 @@ public class GridPlanManage {
 
     private static final Logger LOG = LogManager.getLogger(GridPlanManage.class);
 
-    /**
-     * 蚂蚁数量
-     */
-    private static final int ANT_NUM = 200;
 
-    /**
-     * 循环次数
-     */
-    private static final int LOOP = 400;
-
-
-    /**
-     * 以直线距离1/2为半径，向外延伸距离，单位KM
-     */
-    private static final double RADIUS_ADD = 0.5;
 
     @Resource
     private BaseDataInit baseDataInit;
@@ -64,9 +51,6 @@ public class GridPlanManage {
 
     @Resource
     private CalculateService calculateService;
-
-    @Resource
-    private AntCalculateManage antCalculateManage;
 
     @Resource(name = "executorService")
     private ExecutorService executorService;
@@ -82,13 +66,13 @@ public class GridPlanManage {
         List<RoadBo> roadBoList = getRoadBoList(start, end);
         //初始化概率
         Map<Long, RoadHandleBo> roadHandleBoMap = calculateService.initProbability(roadBoList);
-        antCalculateManage.initAntCalculateManage(roadHandleBoMap,handleBoList, start, end, ANT_NUM);
-        List<AntCalculateTask> antCalculateTaskList = IntStream.range(0, LOOP).mapToObj(s ->new AntCalculateTask(antCalculateManage)).collect(Collectors.toList());
+        AntCalculateManage antCalculateManage=new AntCalculateManage(roadHandleBoMap,handleBoList, start, end, Constants.ANT_NUM);
+        List<AntCalculateTask> antCalculateTaskList = IntStream.range(0, Constants.LOOP).mapToObj(s ->new AntCalculateTask(antCalculateManage)).collect(Collectors.toList());
         List<Future<List<HandleBo>>> futureList = executorService.invokeAll(antCalculateTaskList, 30, TimeUnit.MINUTES);
 
 //        antCalculateManage.initAntCalculateManage(roadHandleBoMap, start, end,  ANT_NUM);
 //        handleBoList = new AntCalculateTask(antCalculateManage).call();
-        for (int i = 0; i < LOOP; i++) {
+        for (int i = 0; i < Constants.LOOP; i++) {
             Future<List<HandleBo>> future = futureList.get(i);
             if (future.isCancelled() || Objects.isNull(future.get())) {
                 continue;
@@ -120,7 +104,7 @@ public class GridPlanManage {
         //中心点坐标
         NodeBo nodeBo = CoordinateCenter.GetCenterPoint(nodeStartEnd);
 
-        double radius = CoordinateDistance.GetDistance(nodeBoMap.get(String.valueOf(start)), nodeBoMap.get(String.valueOf(end))) / (2 * 1000) + RADIUS_ADD;
+        double radius = CoordinateDistance.GetDistance(nodeBoMap.get(String.valueOf(start)), nodeBoMap.get(String.valueOf(end))) / (2 * 1000) + Constants.RADIUS_ADD;
 
         //查询end节点，
         List<NodeBo> searchList = luceneSpatial.search(nodeBo, radius, nodeBoList.size());

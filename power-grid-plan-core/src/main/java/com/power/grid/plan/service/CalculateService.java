@@ -46,9 +46,4 @@ public interface CalculateService {
      */
     void volatilizePheromone(Map<Long, RoadHandleBo> roadHandleBoMap);
 
-    /**
-     * 回路节点挥发信息素
-     * @param roadHandleBoMap 运行信息
-     */
-    void volatilizePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, Long deadId);
 }
