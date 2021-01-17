@@ -61,7 +61,7 @@ public class AntCalculateManage {
             //计算路径
 //            Map<Long, RoadHandleBo> currentMap=new HashMap<>(roadHandleBoMap);
             HandleBo boCalculate = calculateService.handle(start, end, roadHandleBoMap, deadIds);
-            System.out.println(Thread.currentThread().getName() + "死亡节点数量：" + deadIds.size() + "个");
+//            System.out.println(Thread.currentThread().getName() + "死亡节点数量：" + deadIds.size() + "个");
 
             //已选择路径，不再释放信息素，重新计算
 //            if (handleBoList.contains(boCalculate)) {
@@ -79,13 +79,13 @@ public class AntCalculateManage {
 //        volatilizePheromone(deadIds);
 
         long endTime = System.currentTimeMillis();
-        System.out.println(Thread.currentThread().getName() + "计算50只蚂蚁计算耗时：" + (endTime - startTime) / 1000 + "秒");
+//        System.out.println(Thread.currentThread().getName() + "计算50只蚂蚁计算耗时：" + (endTime - startTime) / 1000 + "秒");
         return handleBoList;
     }
 
     private List<HandleBo> setBestHandle(HandleBo bo) {
         List<HandleBo> currentList = new ArrayList<>(handleBoList);
-        if (currentList.size() <= 3) {
+        if (currentList.size() < 1) {
             currentList.add(bo);
             synchronized (this) {
                 handleBoList = currentList;
@@ -99,7 +99,7 @@ public class AntCalculateManage {
             }
         }
 
-        currentList = currentList.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0, 3);
+        currentList = currentList.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0,1);
         synchronized (this) {
             handleBoList = currentList;
         }

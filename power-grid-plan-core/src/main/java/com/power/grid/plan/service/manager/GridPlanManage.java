@@ -82,31 +82,31 @@ public class GridPlanManage {
         List<RoadBo> roadBoList = getRoadBoList(start, end);
         //初始化概率
         Map<Long, RoadHandleBo> roadHandleBoMap = calculateService.initProbability(roadBoList);
-        List<AntCalculateTask> antCalculateTaskList = IntStream.range(0, LOOP).mapToObj(s -> {
-            antCalculateManage.initAntCalculateManage(roadHandleBoMap, start, end, ANT_NUM);
-            return new AntCalculateTask(antCalculateManage);
-        }).collect(Collectors.toList());
+//        List<AntCalculateTask> antCalculateTaskList = IntStream.range(0, LOOP).mapToObj(s -> {
+//            antCalculateManage.initAntCalculateManage(roadHandleBoMap, start, end, ANT_NUM);
+//            return new AntCalculateTask(antCalculateManage);
+//        }).collect(Collectors.toList());
+//
+//        List<Future<List<HandleBo>>> futureList = executorService.invokeAll(antCalculateTaskList, 30, TimeUnit.MINUTES);
 
-        List<Future<List<HandleBo>>> futureList = executorService.invokeAll(antCalculateTaskList, 30, TimeUnit.MINUTES);
-
-//        antCalculateManage.initAntCalculateManage(handleBoList, roadHandleBoMap, start, end, new HandleBo(), ANT_NUM);
-//        bo = new AntCalculateTask(antCalculateManage).call();
-        for (int i = 0; i < LOOP; i++) {
-            Future<List<HandleBo>> future = futureList.get(i);
-            if (future.isCancelled() || Objects.isNull(future.get())) {
-                continue;
-            }
-
-            if (CollectionUtils.isNotEmpty(future.get())) {
-                handleBoSet.addAll(future.get());
-                if(handleBoSet.size()>3){
-                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0,3);
-                }else{
-                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList());
-                }
-
-            }
-        }
+        antCalculateManage.initAntCalculateManage(roadHandleBoMap, start, end,  ANT_NUM);
+        handleBoList = new AntCalculateTask(antCalculateManage).call();
+//        for (int i = 0; i < LOOP; i++) {
+//            Future<List<HandleBo>> future = futureList.get(i);
+//            if (future.isCancelled() || Objects.isNull(future.get())) {
+//                continue;
+//            }
+//
+//            if (CollectionUtils.isNotEmpty(future.get())) {
+//                handleBoSet.addAll(future.get());
+//                if(handleBoSet.size()>3){
+//                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0,3);
+//                }else{
+//                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList());
+//                }
+//
+//            }
+//        }
         return handleBoList;
     }
 

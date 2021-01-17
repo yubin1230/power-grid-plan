@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * 计算实现类
+ *
  * @author yubin
  * @date 2020/12/1 0:10
  */
@@ -70,9 +71,10 @@ public class CalculateServiceImpl implements CalculateService {
             Map<Long, Double> probabilityMap = new HashMap<>();
             Map<Long, Double> sumPriceMap = new HashMap<>();
             v.forEach(n -> {
-                BigDecimal d = new BigDecimal(Double.toString(n.getDistance()));
-                BigDecimal p = new BigDecimal(Double.toString(n.getPrice()));
-                double price = d.multiply(p).doubleValue();
+//                BigDecimal d = new BigDecimal(Double.toString(n.getDistance()));
+//                BigDecimal p = new BigDecimal(Double.toString(n.getPrice()));
+//                double price = d.multiply(p).doubleValue();
+                double price = n.getDistance();
                 if (k.equals(n.getStartNodeId())) {
                     probabilityMap.put(n.getEndNodeId(), 1.0 / v.size());
                     sumPriceMap.put(n.getEndNodeId(), price);
@@ -101,32 +103,60 @@ public class CalculateServiceImpl implements CalculateService {
     }
 
     @Override
-    public HandleBo handle(Long start, Long end, Map<Long, RoadHandleBo> roadHandleBoMap, Set<Long> deadIds) {
-        long startTime = System.currentTimeMillis();
+    public HandleBo handle(Long start, Long end, Map<Long, RoadHandleBo> roadHandleBoMap, Set<Long> deadIds1) {
         HandleBo handleBo = new HandleBo();
         LinkedList<Long> processedIds = new LinkedList<>();
+        Set<Long> processedIdSet = new HashSet<>();
+        Set<Long> deadIds = new HashSet<>();
         Double sumPrice = 0.0;
         processedIds.add(start);
+        processedIdSet.add(start);
         Long walk = start;
+        long startTime = System.currentTimeMillis();
         while (true) {
-//            Set<Long> deadIdSet=getCurrentDeadIdSet();
+
             RoadHandleBo roadHandleBo = roadHandleBoMap.get(walk);
-            Set<Long> noProcessedIds = new HashSet<>(processedIds);
-            noProcessedIds.addAll(deadIds);
-            WalkBo walkBo = roulette.calculate(roadHandleBo, noProcessedIds);
+//            Set<Long> noProcessedIds = new HashSet<>(deadIds);
+//
+//            noProcessedIds.addAll(processedIds);
+            long startTime1 = System.currentTimeMillis() * 1000;
+            long startNanoTime = System.nanoTime(); // 纳秒
+            long start2 = startTime1 + (startNanoTime - startTime1 / 1000000 * 1000000) / 1000;
+            WalkBo walkBo = roulette.calculate(roadHandleBo, deadIds, processedIdSet);
+            long endTime1 = System.currentTimeMillis() * 1000;
+            long endNanoTime = System.nanoTime(); // 纳秒
+            long end2 = endTime1 + (endNanoTime - endTime1 / 1000000 * 1000000) / 1000;
+//            System.out.println(Thread.currentThread().getName() + "单只蚂蚁路径耗时：" + (end2 - start2) + "微秒");
             if (walkBo.isDead()) {
+                startTime1 = System.currentTimeMillis() * 1000;
+                startNanoTime = System.nanoTime(); // 纳秒
+                start2 = startTime1 + (startNanoTime - startTime1 / 1000000 * 1000000) / 1000;
 
                 processedIds.remove(walk);
+                processedIdSet.remove(walk);
 
                 deadIds.add(walk);
 
                 walk = processedIds.getLast();
                 //减去与上一个距离
                 sumPrice -= roadHandleBo.getSumPrice().get(walk);
+
+                endTime1 = System.currentTimeMillis() * 1000;
+                endNanoTime = System.nanoTime(); // 纳秒
+                end2 = endTime1 + (endNanoTime - endTime1 / 1000000 * 1000000) / 1000;
+//                System.out.println(Thread.currentThread().getName() + "死亡节点处理耗时：" + (end2 - start2) + "微秒");
             } else {
+                startTime1 = System.currentTimeMillis() * 1000;
+                startNanoTime = System.nanoTime(); // 纳秒
+                start2 = startTime1 + (startNanoTime - startTime1 / 1000000 * 1000000) / 1000;
                 walk = walkBo.getNext();
                 sumPrice += roadHandleBo.getSumPrice().get(walk);
                 processedIds.add(walk);
+                processedIdSet.add(walk);
+                endTime1 = System.currentTimeMillis() * 1000;
+                endNanoTime = System.nanoTime(); // 纳秒
+                end2 = endTime1 + (endNanoTime - endTime1 / 1000000 * 1000000) / 1000;
+//                System.out.println(Thread.currentThread().getName() + "成功节点处理耗时：" + (end2 - start2) + "微秒");
             }
             if (walk.equals(start) && deadIds.containsAll(roadHandleBoMap.get(start).getProbability().keySet())) {
                 throw new UnableArriveException("开始、结束节点无法到达");
@@ -139,7 +169,7 @@ public class CalculateServiceImpl implements CalculateService {
         handleBo.setHandlePath(processedIds);
         handleBo.setSumPrice(sumPrice);
         long endTime = System.currentTimeMillis();
-//        System.out.println(Thread.currentThread().getName() + "单只蚂蚁计算耗时：" + (endTime - startTime) / 1000 + "秒");
+//        System.out.println(Thread.currentThread().getName() + "单只蚂蚁计算耗时：" + (endTime - startTime) + "毫秒");
         return handleBo;
     }
 
@@ -166,12 +196,13 @@ public class CalculateServiceImpl implements CalculateService {
 
             for (int j = 0; j < handlePath.size() - 1; j++) {
                 RoadHandleBo roadHandleBo = roadHandleBoMap.get(handlePath.get(j));
-                Map<Long, Double> probability = roadHandleBo.getProbability();
-                if(Objects.isNull(probability)){
+                if (Objects.isNull(roadHandleBo)) {
                     System.out.println(handlePath.get(j));
                     System.out.println(roadHandleBo);
+                    continue;
                 }
-                Double probabilityNode = probability.get(handlePath.get(j + 1)) + (1.0 / sumPrice)*(handleBoList.size()-i);
+                Map<Long, Double> probability = roadHandleBo.getProbability();
+                Double probabilityNode = probability.get(handlePath.get(j + 1)) + (1.0 / sumPrice) * (handleBoList.size() - i);
                 probability.put(handlePath.get(j + 1), probabilityNode);
             }
         }
@@ -190,12 +221,12 @@ public class CalculateServiceImpl implements CalculateService {
     }
 
     @Override
-    public void volatilizePheromone(Map<Long, RoadHandleBo> roadHandleBoMap,Long deadId) {
+    public void volatilizePheromone(Map<Long, RoadHandleBo> roadHandleBoMap, Long deadId) {
 //        deadIds.forEach(bo -> {
-            Map<Long, Double> probability = roadHandleBoMap.get(deadId).getProbability();
-            probability.forEach((k, v) -> {
-                probability.put(k, v * rho*0.6);
-            });
+        Map<Long, Double> probability = roadHandleBoMap.get(deadId).getProbability();
+        probability.forEach((k, v) -> {
+            probability.put(k, v * rho * 0.6);
+        });
 //        });
     }
 
