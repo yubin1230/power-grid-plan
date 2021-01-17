@@ -67,6 +67,7 @@ public class GridPlanManage {
         //初始化概率
         Map<Long, RoadHandleBo> roadHandleBoMap = calculateService.initProbability(roadBoList);
         AntCalculateManage antCalculateManage=new AntCalculateManage(roadHandleBoMap,handleBoList, start, end, Constants.ANT_NUM);
+        antCalculateManage.setCalculateService(calculateService);
         List<AntCalculateTask> antCalculateTaskList = IntStream.range(0, Constants.LOOP).mapToObj(s ->new AntCalculateTask(antCalculateManage)).collect(Collectors.toList());
         List<Future<List<HandleBo>>> futureList = executorService.invokeAll(antCalculateTaskList, 30, TimeUnit.MINUTES);
 

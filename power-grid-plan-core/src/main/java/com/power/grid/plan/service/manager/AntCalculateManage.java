@@ -7,9 +7,7 @@ import com.power.grid.plan.util.RemoveLoopRoad;
 import lombok.Data;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,7 +21,6 @@ public class AntCalculateManage {
 
     private static final Logger LOG = LogManager.getLogger(AntCalculateManage.class);
 
-    @Resource
     private CalculateService calculateService;
 
     /**
@@ -62,9 +59,6 @@ public class AntCalculateManage {
 //                continue;
 //            }
 
-            //删除回路
-            boCalculate= RemoveLoopRoad.removeLoopRoad(roadHandleBoMap,boCalculate);
-
             List<HandleBo> currentList = setBestHandle(boCalculate);
             //释放信息素
             releasePheromone(currentList);
@@ -85,6 +79,11 @@ public class AntCalculateManage {
             }
             for (HandleBo handleBo : currentList) {
                 if (bo.getSumPrice() <= handleBo.getSumPrice() && !currentList.contains(bo)) {
+                    //            删除回路
+                    long startTime = System.currentTimeMillis();
+                    bo= RemoveLoopRoad.removeLoopRoad(roadHandleBoMap,bo);
+                    long endTime = System.currentTimeMillis();
+                    System.out.println("删除回路耗时：" + (endTime - startTime) + "毫秒");
                     currentList.add(bo);
                     break;
                 }

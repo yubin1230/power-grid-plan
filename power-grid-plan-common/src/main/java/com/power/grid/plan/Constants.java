@@ -10,12 +10,12 @@ public class Constants {
     /**
      * 蚂蚁数量
      */
-    public static final int ANT_NUM = 100;
+    public static final int ANT_NUM = 50;
 
     /**
      * 循环次数
      */
-    public static final int LOOP = 200;
+    public static final int LOOP = 300;
 
 
     /**
@@ -36,7 +36,7 @@ public class Constants {
     /**
      * 每次成功路线，信息素释放单位
      */
-    public static final double PHEROMONE_RELEASING_UNIT = 0.5;
+    public static final double PHEROMONE_RELEASING_UNIT = 0.1;
 
     /**
      * 设置为5
