@@ -202,7 +202,7 @@ public class CalculateServiceImpl implements CalculateService {
                     continue;
                 }
                 Map<Long, Double> probability = roadHandleBo.getProbability();
-                Double probabilityNode = probability.get(handlePath.get(j + 1)) + (1.0 / sumPrice) * (handleBoList.size() - i);
+                Double probabilityNode = probability.get(handlePath.get(j + 1)) + 1/(sumPrice) ;
                 probability.put(handlePath.get(j + 1), probabilityNode);
             }
         }

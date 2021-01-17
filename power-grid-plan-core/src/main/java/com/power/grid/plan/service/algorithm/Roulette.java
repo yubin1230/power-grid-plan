@@ -108,7 +108,7 @@ public class Roulette {
             Random random = new Random();
             int index = random.nextInt(keyList.size());
             nodeId = keyList.get(index);
-            double n = 1.0 / sumPrice.get(nodeId);
+            double n =  sumPrice.get(nodeId);
             n = Math.pow(n, beta);
             double t = probability.get(nodeId);
             t = Math.pow(t, alpha);
@@ -129,7 +129,7 @@ public class Roulette {
         //根据公式计算概率
         double sum = 0;
         for (Long nodeId : keyList) {
-            double a = 1.0 / sumPrice.get(nodeId);
+            double a =  sumPrice.get(nodeId);
             a = Math.pow(a, beta);
             double b = probability.get(nodeId);
             b = Math.pow(b, alpha);

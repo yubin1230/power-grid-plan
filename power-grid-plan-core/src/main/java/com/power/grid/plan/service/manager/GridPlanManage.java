@@ -43,12 +43,12 @@ public class GridPlanManage {
     /**
      * 蚂蚁数量
      */
-    private static final int ANT_NUM = 50;
+    private static final int ANT_NUM = 200;
 
     /**
      * 循环次数
      */
-    private static final int LOOP = 100;
+    private static final int LOOP = 400;
 
 
     /**
@@ -77,36 +77,33 @@ public class GridPlanManage {
     }
 
     public List<HandleBo> calculateBestPath(Long start, Long end) throws IOException, InterruptedException, ExecutionException {
-        List<HandleBo> handleBoList=new ArrayList<>();
+        List<HandleBo> handleBoList=Collections.synchronizedList(new ArrayList<>());;
         Set<HandleBo> handleBoSet=new HashSet<>();
         List<RoadBo> roadBoList = getRoadBoList(start, end);
         //初始化概率
         Map<Long, RoadHandleBo> roadHandleBoMap = calculateService.initProbability(roadBoList);
-//        List<AntCalculateTask> antCalculateTaskList = IntStream.range(0, LOOP).mapToObj(s -> {
-//            antCalculateManage.initAntCalculateManage(roadHandleBoMap, start, end, ANT_NUM);
-//            return new AntCalculateTask(antCalculateManage);
-//        }).collect(Collectors.toList());
-//
-//        List<Future<List<HandleBo>>> futureList = executorService.invokeAll(antCalculateTaskList, 30, TimeUnit.MINUTES);
+        antCalculateManage.initAntCalculateManage(roadHandleBoMap,handleBoList, start, end, ANT_NUM);
+        List<AntCalculateTask> antCalculateTaskList = IntStream.range(0, LOOP).mapToObj(s ->new AntCalculateTask(antCalculateManage)).collect(Collectors.toList());
+        List<Future<List<HandleBo>>> futureList = executorService.invokeAll(antCalculateTaskList, 30, TimeUnit.MINUTES);
 
-        antCalculateManage.initAntCalculateManage(roadHandleBoMap, start, end,  ANT_NUM);
-        handleBoList = new AntCalculateTask(antCalculateManage).call();
-//        for (int i = 0; i < LOOP; i++) {
-//            Future<List<HandleBo>> future = futureList.get(i);
-//            if (future.isCancelled() || Objects.isNull(future.get())) {
-//                continue;
-//            }
-//
-//            if (CollectionUtils.isNotEmpty(future.get())) {
-//                handleBoSet.addAll(future.get());
-//                if(handleBoSet.size()>3){
-//                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0,3);
-//                }else{
-//                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList());
-//                }
-//
-//            }
-//        }
+//        antCalculateManage.initAntCalculateManage(roadHandleBoMap, start, end,  ANT_NUM);
+//        handleBoList = new AntCalculateTask(antCalculateManage).call();
+        for (int i = 0; i < LOOP; i++) {
+            Future<List<HandleBo>> future = futureList.get(i);
+            if (future.isCancelled() || Objects.isNull(future.get())) {
+                continue;
+            }
+
+            if (CollectionUtils.isNotEmpty(future.get())) {
+                handleBoSet.addAll(future.get());
+                if(handleBoSet.size()>3){
+                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0,1);
+                }else{
+                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList());
+                }
+
+            }
+        }
         return handleBoList;
     }
 

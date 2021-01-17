@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 /**
  * 蚂蚁计算管理类
+ *
  * @author yubin
  * @date 2021/1/10 13:27
  */
@@ -41,17 +42,18 @@ public class AntCalculateManage {
 
     private long end;
 
-    private volatile List<HandleBo> handleBoList = Collections.synchronizedList(new ArrayList<>());
+    private volatile List<HandleBo> handleBoList;
 
 
     public AntCalculateManage() {
     }
 
-    public void initAntCalculateManage(Map<Long, RoadHandleBo> roadHandleBoMap, long start, long end, int antNum) {
+    public void initAntCalculateManage(Map<Long, RoadHandleBo> roadHandleBoMap, List<HandleBo> handleBoList, long start, long end, int antNum) {
         this.roadHandleBoMap = roadHandleBoMap;
         this.start = start;
         this.end = end;
         this.antNum = antNum;
+        this.handleBoList = handleBoList;
     }
 
     public List<HandleBo> handle() {
@@ -92,14 +94,14 @@ public class AntCalculateManage {
             }
             return currentList;
         }
-        for(HandleBo handleBo:currentList){
+        for (HandleBo handleBo : currentList) {
             if (bo.getSumPrice() <= handleBo.getSumPrice() && !currentList.contains(bo)) {
                 currentList.add(bo);
                 break;
             }
         }
 
-        currentList = currentList.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0,1);
+        currentList = currentList.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0, 1);
         synchronized (this) {
             handleBoList = currentList;
         }
@@ -115,6 +117,6 @@ public class AntCalculateManage {
     }
 
     private synchronized void volatilizePheromone(Long deadId) {
-        calculateService.volatilizePheromone(roadHandleBoMap,deadId);
+        calculateService.volatilizePheromone(roadHandleBoMap, deadId);
     }
 }

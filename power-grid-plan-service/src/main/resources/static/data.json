@@ -1,5 +1,5 @@
 [
-  {"road":9919247,"start":97147774,"end":1001789,"distance":0,"price":0.1},
+  {"road":9919247,"start":97147774,"end":1001789,"distance":0.1,"price":0.1},
   {"road":9919248,"start":1033267,"end":97147784,"distance":0.08,"price":2.4},
   {"road":9919249,"start":97147784,"end":1011318,"distance":0.01,"price":0.3},
   {"road":9919252,"start":1019963,"end":97147788,"distance":0.03,"price":1.5},
