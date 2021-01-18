@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +42,7 @@ public class CalculateServiceImpl implements CalculateService {
 
     @Override
     public Map<Long, RoadHandleBo> initProbability(List<RoadBo> roadBoList) {
-        Map<Long, RoadHandleBo> roadHandleBoMap = new HashMap<>();
+        Map<Long, RoadHandleBo> roadHandleBoMap = new ConcurrentHashMap<>();
         Map<Long, List<RoadBo>> startNodeMap = roadBoList.parallelStream().collect(Collectors.groupingBy(RoadBo::getStartNodeId));
         Map<Long, List<RoadBo>> endNodeMap = roadBoList.parallelStream().collect(Collectors.groupingBy(RoadBo::getEndNodeId));
         Map<Long, List<RoadBo>> nodeMap = new HashMap<>();
@@ -65,10 +66,10 @@ public class CalculateServiceImpl implements CalculateService {
             Map<Long, Double> probabilityMap = new HashMap<>();
             Map<Long, Double> sumPriceMap = new HashMap<>();
             v.forEach(n -> {
-//                BigDecimal d = new BigDecimal(Double.toString(n.getDistance()));
-//                BigDecimal p = new BigDecimal(Double.toString(n.getPrice()));
-//                double price = d.multiply(p).doubleValue();
-                double price = n.getDistance();
+                BigDecimal d = new BigDecimal(Double.toString(n.getDistance()));
+                BigDecimal p = new BigDecimal(Double.toString(n.getPrice()));
+                double price = d.multiply(p).doubleValue();
+//                double price = n.getDistance();
                 if (k.equals(n.getStartNodeId())) {
                     probabilityMap.put(n.getEndNodeId(), 1.0 / v.size());
                     sumPriceMap.put(n.getEndNodeId(), price);
@@ -160,7 +161,9 @@ public class CalculateServiceImpl implements CalculateService {
                     continue;
                 }
                 Map<Long, Double> probability = roadHandleBo.getProbability();
-                Double probabilityNode = probability.get(handlePath.get(j + 1)) + 1 / (sumPrice) * Constants.PHEROMONE_RELEASING_UNIT;
+                //3条，分别 1、2/3、1/3释放信息素
+                double pheromoneReleasingUnit = Constants.PHEROMONE_RELEASING_UNIT * (handleBoList.size() - i) / handleBoList.size();
+                Double probabilityNode = probability.get(handlePath.get(j + 1)) + 1 / (sumPrice) * pheromoneReleasingUnit;
                 probability.put(handlePath.get(j + 1), probabilityNode);
             }
         }

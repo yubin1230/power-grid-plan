@@ -81,13 +81,12 @@ public class GridPlanManage {
 
             if (CollectionUtils.isNotEmpty(future.get())) {
                 handleBoSet.addAll(future.get());
-                if(handleBoSet.size()>3){
-                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0,1);
-                }else{
-                    handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList());
-                }
-
             }
+        }
+        if(handleBoSet.size()>3){
+            handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0,3);
+        }else{
+            handleBoList=handleBoSet.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList());
         }
         return handleBoList;
     }

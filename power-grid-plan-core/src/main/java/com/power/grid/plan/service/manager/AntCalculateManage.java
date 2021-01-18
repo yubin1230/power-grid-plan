@@ -72,7 +72,7 @@ public class AntCalculateManage {
     private List<HandleBo> setBestHandle(HandleBo bo) {
         synchronized (this) {
             List<HandleBo> currentList = new ArrayList<>(handleBoList);
-            if (currentList.size() < 1) {
+            if (currentList.size() < 3) {
                 currentList.add(bo);
                 handleBoList = currentList;
                 return currentList;
@@ -88,7 +88,7 @@ public class AntCalculateManage {
                     break;
                 }
             }
-            currentList = currentList.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0, 1);
+            currentList = currentList.stream().sorted(Comparator.comparing(HandleBo::getSumPrice)).collect(Collectors.toList()).subList(0, 3);
             handleBoList = currentList;
             return currentList;
         }
