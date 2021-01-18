@@ -156,8 +156,8 @@ public class CalculateServiceImpl implements CalculateService {
             for (int j = 0; j < handlePath.size() - 1; j++) {
                 RoadHandleBo roadHandleBo = roadHandleBoMap.get(handlePath.get(j));
                 if (Objects.isNull(roadHandleBo)) {
-                    System.out.println(handlePath.get(j));
-                    System.out.println(roadHandleBo);
+//                    System.out.println(handlePath.get(j));
+//                    System.out.println(roadHandleBo);
                     continue;
                 }
                 Map<Long, Double> probability = roadHandleBo.getProbability();

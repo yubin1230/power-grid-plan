@@ -79,11 +79,8 @@ public class AntCalculateManage {
             }
             for (HandleBo handleBo : currentList) {
                 if (bo.getSumPrice() <= handleBo.getSumPrice() && !currentList.contains(bo)) {
-                    //            删除回路
-                    long startTime = System.currentTimeMillis();
+                    //删除回路
                     bo= RemoveLoopRoad.removeLoopRoad(roadHandleBoMap,bo);
-                    long endTime = System.currentTimeMillis();
-                    System.out.println("删除回路耗时：" + (endTime - startTime) + "毫秒");
                     currentList.add(bo);
                     break;
                 }
