@@ -23,6 +23,15 @@ public class CoordinateDistance {
         return d;
     }
 
+    public static double GetDistance(double Long1r,double Lat1r,double Long2r,double Lat2r) {
+        double R = 6378100; // Earth's radius (km)
+        double d = Math.acos(Math.sin(Lat1r) *
+                Math.sin(Lat2r) + Math.cos(Lat1r) *
+                Math.cos(Lat2r) *
+                Math.cos(Long2r - Long1r)) * R;
+        return d;
+    }
+
     private static double ConvertDegreeToRadians(double degrees) {
         return (Math.PI / 180) * degrees;
     }
