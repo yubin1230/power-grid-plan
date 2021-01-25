@@ -46,4 +46,6 @@ public class Constants {
      * 轮盘赌因子，越大循环次数越高，准确率高
      */
     public static final int ROULETTE_FACTOR = 15;
+
+    public static final double[] FACTORS = {0.8, 1.0, 1.4, 1.6, 1.8, 2.0, 2.2};
 }

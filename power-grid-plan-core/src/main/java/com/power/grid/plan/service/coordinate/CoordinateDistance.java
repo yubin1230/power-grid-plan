@@ -23,7 +23,11 @@ public class CoordinateDistance {
         return d;
     }
 
-    public static double GetDistance(double Long1r,double Lat1r,double Long2r,double Lat2r) {
+    public static double GetDistance(double Lon1, double Lat1, double Lon2, double Lat2) {
+        double Lat1r = ConvertDegreeToRadians(Lat1);
+        double Lat2r = ConvertDegreeToRadians(Lat2);
+        double Long1r = ConvertDegreeToRadians(Lon1);
+        double Long2r = ConvertDegreeToRadians(Lon2);
         double R = 6378100; // Earth's radius (km)
         double d = Math.acos(Math.sin(Lat1r) *
                 Math.sin(Lat2r) + Math.cos(Lat1r) *
@@ -45,6 +49,7 @@ public class CoordinateDistance {
         NodeBo start = new NodeBo(lng1, lat1);
         NodeBo end = new NodeBo(lng2, lat2);
         System.out.println(GetDistance(start, end));
+        System.out.println(GetDistance(lng1, lat1, lng2, lat2));
 
     }
 }

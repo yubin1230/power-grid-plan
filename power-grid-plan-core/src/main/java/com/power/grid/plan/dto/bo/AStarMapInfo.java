@@ -15,4 +15,5 @@ public class AStarMapInfo {
     private Map<Long, NodeBo> nodeBoMap;
     private AStarNodeBo start; // 起始结点
     private AStarNodeBo end; // 最终结点
+    private double hFactor;
 }

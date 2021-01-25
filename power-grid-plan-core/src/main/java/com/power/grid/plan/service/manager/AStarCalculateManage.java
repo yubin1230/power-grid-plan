@@ -16,6 +16,7 @@ import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -29,16 +30,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * 蚂蚁计算管理类
+ * A星计算管理类
  * @author yubin
  * @date 2021/1/10 13:27
  */
-@Data
+@Component
 public class AStarCalculateManage {
 
 
     private static final Logger LOG = LogManager.getLogger(GridPlanManage.class);
-
 
     @Resource
     private BaseDataInit baseDataInit;
@@ -49,7 +49,7 @@ public class AStarCalculateManage {
     @Resource
     private CalculateService calculateService;
 
-    public List<HandleBo> calculate(Long start, Long end) throws IOException, InterruptedException, ExecutionException {
+    public List<HandleBo> calculate(Long start, Long end) throws IOException {
 
         List<RoadBo> roadBoList = getRoadBoList(start, end);
         //初始化概率
@@ -58,16 +58,26 @@ public class AStarCalculateManage {
 
         Map<Long, NodeBo> nodeBoMap = nodeBoList.stream().collect(Collectors.toMap(NodeBo::getId, node -> node, (key1, key2) -> key1));
 
+        double[] factors=Constants.FACTORS;
+        Set<HandleBo> handleBoSet=Sets.newHashSet();
+        for (double factor : factors) {
+            AStarMapInfo mapInfo = new AStarMapInfo();
+            mapInfo.setRoadHandleBoMap(roadHandleBoMap);
+            mapInfo.setNodeBoMap(nodeBoMap);
+            mapInfo.setHFactor(factor);
+            mapInfo.setStart(new AStarNodeBo(nodeBoMap.get(start)));
+            mapInfo.setEnd(new AStarNodeBo(nodeBoMap.get(end)));
+            AStar aStar = new AStar();
+            HandleBo handleBo = aStar.start(mapInfo);
+            LOG.info("查找到路径："+handleBo.getHandlePath());
+            LOG.info("总成本："+handleBo.getSumPrice());
+            handleBoSet.add(handleBo);
+            if(handleBoSet.size()>=3){
+                break;
+            }
+        }
 
-        AStarMapInfo mapInfo = new AStarMapInfo();
-        mapInfo.setRoadHandleBoMap(roadHandleBoMap);
-        mapInfo.setNodeBoMap(nodeBoMap);
-        mapInfo.setStart(new AStarNodeBo(nodeBoMap.get(start)));
-        mapInfo.setEnd(new AStarNodeBo(nodeBoMap.get(end)));
-
-        AStar aStar = new AStar();
-        aStar.start(mapInfo);
-        return null;
+        return Lists.newArrayList(handleBoSet);
     }
 
     public List<RoadBo> getRoadBoList(Long start, Long end) throws IOException {

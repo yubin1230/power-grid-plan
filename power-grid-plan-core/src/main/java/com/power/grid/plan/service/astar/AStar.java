@@ -37,7 +37,7 @@ public class AStar {
             closeList.add(current);
             addNeighborNodeInOpen(mapInfo, current);
             if (isCoordinateInClose(mapInfo.getEnd().getNodeBo().getId())) {
-                return drawPath(mapInfo.getEnd());
+                return buildHandleBo(mapInfo.getEnd());
             }
         }
         throw new UnableArriveException("无法到达");
@@ -46,18 +46,17 @@ public class AStar {
     /**
      * 在二维数组中绘制路径
      */
-    private HandleBo drawPath(AStarNodeBo end) {
-        System.out.println("总代价：" + end.getG());
+    private HandleBo buildHandleBo(AStarNodeBo end) {
+        HandleBo handleBo = new HandleBo();
+        handleBo.setSumPrice(end.getG());
         LinkedList<Long> path = new LinkedList<>();
         while (end != null) {
             Long nodeId = end.getNodeBo().getId();
             path.add(nodeId);
             end = end.getParent();
         }
-        System.out.println("路径：" + path);
-        HandleBo handleBo = new HandleBo();
+        Collections.reverse(path);
         handleBo.setHandlePath(path);
-        handleBo.setSumPrice(end.getG());
         return handleBo;
     }
 
@@ -83,7 +82,7 @@ public class AStar {
             AStarNodeBo child = findNodeInOpen(nodeId);
             NodeBo nodeBo = mapInfo.getNodeBoMap().get(nodeId);
             if (child == null) {
-                double H = calcH(end.getNodeBo(), nodeBo); // 计算H值
+                double H = calcH(end.getNodeBo(), nodeBo, mapInfo.getHFactor()); // 计算H值
                 if (nodeId.equals(end.getNodeBo().getId())) {
                     child = end;
                     child.setParent(current);
@@ -118,9 +117,9 @@ public class AStar {
     /**
      * 计算H的估值：“曼哈顿”法，坐标分别取差值相加
      */
-    private double calcH(NodeBo end, NodeBo nodeBo) {
-        return CoordinateDistance.GetDistance(end.getLongitude(), end.getLatitude(), nodeBo.getLongitude(), end.getLatitude())
-                + CoordinateDistance.GetDistance(end.getLongitude(), end.getLatitude(), end.getLongitude(), nodeBo.getLatitude());
+    private double calcH(NodeBo end, NodeBo nodeBo, double hFactor) {
+        return (CoordinateDistance.GetDistance(end.getLongitude(), end.getLatitude(), nodeBo.getLongitude(), end.getLatitude()) / 1000
+                + CoordinateDistance.GetDistance(end.getLongitude(), end.getLatitude(), end.getLongitude(), nodeBo.getLatitude()) / 1000) * hFactor;
     }
 
     /**
