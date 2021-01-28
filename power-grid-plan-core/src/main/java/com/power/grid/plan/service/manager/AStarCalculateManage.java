@@ -6,6 +6,7 @@ import com.power.grid.plan.Constants;
 import com.power.grid.plan.dto.bo.*;
 import com.power.grid.plan.service.CalculateService;
 import com.power.grid.plan.service.astar.AStar;
+import com.power.grid.plan.service.astar.InitRoadMap;
 import com.power.grid.plan.service.coordinate.CoordinateCenter;
 import com.power.grid.plan.service.coordinate.CoordinateDistance;
 import com.power.grid.plan.service.coordinate.LuceneSpatial;
@@ -47,19 +48,20 @@ public class AStarCalculateManage {
     private LuceneSpatial luceneSpatial;
 
     @Resource
-    private CalculateService calculateService;
+    private InitRoadMap initRoadMap;
 
     public List<HandleBo> calculate(Long start, Long end) throws IOException {
 
         List<RoadBo> roadBoList = getRoadBoList(start, end);
-        //初始化概率
-        Map<Long, RoadHandleBo> roadHandleBoMap = calculateService.initProbability(roadBoList);
+        //初始化距离、成本
+        Map<Long, AStarRoadHandleBo> roadHandleBoMap = initRoadMap.initRoadMap(roadBoList);
+
         List<NodeBo> nodeBoList = baseDataInit.getNodeBoList();
 
         Map<Long, NodeBo> nodeBoMap = nodeBoList.stream().collect(Collectors.toMap(NodeBo::getId, node -> node, (key1, key2) -> key1));
 
-        double[] factors=Constants.FACTORS;
-        Set<HandleBo> handleBoSet=Sets.newHashSet();
+        double[] factors = Constants.FACTORS;
+        Set<HandleBo> handleBoSet = Sets.newHashSet();
         for (double factor : factors) {
             AStarMapInfo mapInfo = new AStarMapInfo();
             mapInfo.setRoadHandleBoMap(roadHandleBoMap);
@@ -69,10 +71,11 @@ public class AStarCalculateManage {
             mapInfo.setEnd(new AStarNodeBo(nodeBoMap.get(end)));
             AStar aStar = new AStar();
             HandleBo handleBo = aStar.start(mapInfo);
-            LOG.info("查找到路径："+handleBo.getHandlePath());
-            LOG.info("总成本："+handleBo.getSumPrice());
+            handleBo.setSumPrice(getSumPrice(roadHandleBoMap, handleBo.getHandlePath()));
+            LOG.info("查找到路径：" + handleBo.getHandlePath());
+            LOG.info("总成本：" + handleBo.getSumPrice());
             handleBoSet.add(handleBo);
-            if(handleBoSet.size()>=3){
+            if (handleBoSet.size() >= 3) {
                 break;
             }
         }
@@ -100,5 +103,14 @@ public class AStarCalculateManage {
         HashSet<Long> matchNodeIdList = Sets.newHashSet(searchList.stream().map(NodeBo::getId).collect(Collectors.toSet()));
         //包含开始节点和结束节点
         return roadBoList.parallelStream().filter(roadBo -> matchNodeIdList.contains(roadBo.getStartNodeId()) || matchNodeIdList.contains(roadBo.getEndNodeId())).collect(Collectors.toList());
+    }
+
+    private Double getSumPrice(Map<Long, AStarRoadHandleBo> roadHandleBoMap, List<Long> pathList) {
+        double price = 0.0;
+        for (int i = 0; i < pathList.size() - 1; i++) {
+            AStarRoadHandleBo roadHandleBo = roadHandleBoMap.get(pathList.get(i));
+            price += roadHandleBo.getSumPrice().get(pathList.get(i + 1));
+        }
+        return price;
     }
 }

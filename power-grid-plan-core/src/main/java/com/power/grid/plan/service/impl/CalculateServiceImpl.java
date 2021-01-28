@@ -66,10 +66,10 @@ public class CalculateServiceImpl implements CalculateService {
             Map<Long, Double> probabilityMap = new HashMap<>();
             Map<Long, Double> sumPriceMap = new HashMap<>();
             v.forEach(n -> {
-//                BigDecimal d = new BigDecimal(Double.toString(n.getDistance()));
-//                BigDecimal p = new BigDecimal(Double.toString(n.getPrice()));
-//                double price = d.multiply(p).doubleValue();
-                double price = n.getDistance();
+                BigDecimal d = new BigDecimal(Double.toString(n.getDistance()));
+                BigDecimal p = new BigDecimal(Double.toString(n.getPrice()));
+                double price = d.multiply(p).doubleValue();
+//                double price = n.getDistance();
                 if (k.equals(n.getStartNodeId())) {
                     probabilityMap.put(n.getEndNodeId(), 1.0 / v.size());
                     sumPriceMap.put(n.getEndNodeId(), price);

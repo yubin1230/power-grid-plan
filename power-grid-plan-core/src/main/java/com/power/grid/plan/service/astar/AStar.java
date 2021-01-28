@@ -65,11 +65,11 @@ public class AStar {
      */
     private void addNeighborNodeInOpen(AStarMapInfo mapInfo, AStarNodeBo current) {
 
-        Map<Long, RoadHandleBo> roadHandleBoMap = mapInfo.getRoadHandleBoMap();
+        Map<Long, AStarRoadHandleBo> roadHandleBoMap = mapInfo.getRoadHandleBoMap();
         Long nodeId = current.getNodeBo().getId();
-        RoadHandleBo roadHandleBo = roadHandleBoMap.get(nodeId);
-        Map<Long, Double> sumPrice = roadHandleBo.getSumPrice();
-        sumPrice.forEach((key, value) -> addNeighborNodeInOpen(mapInfo, current, key, value));
+        AStarRoadHandleBo roadHandleBo = roadHandleBoMap.get(nodeId);
+        Map<Long, Double> distance = roadHandleBo.getDistance();
+        distance.forEach((key, value) -> addNeighborNodeInOpen(mapInfo, current, key, value));
     }
 
     /**
@@ -101,6 +101,14 @@ public class AStar {
     }
 
     /**
+     * 计算H的估值：“曼哈顿”法，坐标分别取差值相加
+     */
+    private double calcH(NodeBo end, NodeBo nodeBo, double hFactor) {
+        return (CoordinateDistance.GetDistance(end.getLongitude(), end.getLatitude(), nodeBo.getLongitude(), end.getLatitude()) / 1000
+                + CoordinateDistance.GetDistance(end.getLongitude(), end.getLatitude(), end.getLongitude(), nodeBo.getLatitude()) / 1000) * hFactor;
+    }
+
+    /**
      * 从Open列表中查找结点
      */
     private AStarNodeBo findNodeInOpen(Long nodeId) {
@@ -111,15 +119,6 @@ public class AStar {
             }
         }
         return null;
-    }
-
-
-    /**
-     * 计算H的估值：“曼哈顿”法，坐标分别取差值相加
-     */
-    private double calcH(NodeBo end, NodeBo nodeBo, double hFactor) {
-        return (CoordinateDistance.GetDistance(end.getLongitude(), end.getLatitude(), nodeBo.getLongitude(), end.getLatitude()) / 1000
-                + CoordinateDistance.GetDistance(end.getLongitude(), end.getLatitude(), end.getLongitude(), nodeBo.getLatitude()) / 1000) * hFactor;
     }
 
     /**

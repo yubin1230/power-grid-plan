@@ -47,5 +47,5 @@ public class Constants {
      */
     public static final int ROULETTE_FACTOR = 15;
 
-    public static final double[] FACTORS = {0.8, 1.0, 1.4, 1.6, 1.8, 2.0, 2.2};
+    public static final double[] FACTORS = {0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2, 2.2};
 }
