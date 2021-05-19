@@ -11,6 +11,7 @@ public enum ResponseCodeEnum {
     DEFAULT_SUCCESS(200, "成功"),
     DEFAULT_ERROR(500, "系统异常"),
     REPEAT_SUCCESS(201, "重复处理"),
+    PARAM_ERROR(301, "入参校验异常"),
     ;
 
     int code;

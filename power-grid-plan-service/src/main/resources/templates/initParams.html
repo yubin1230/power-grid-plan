@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <style type="module">
+
+.bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+
+  </style>
+</head>
+<body>
+<div id="app">
+    <template>
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="线路规划参数初始化" name="first">
+
+            <div style="float: right; padding: 3px 0">
+              <el-button type="primary">下一步</el-button>
+              <el-button>上一步</el-button>
+            </div>
+
+            <el-collapse v-model="activeNames" accordion style="clear: both;">
+              <el-collapse-item title="线路参数配置" name="1">
+                <!-- <div>
+                  <div style="border-radius: 4px;border: 1px solid #eee; width: 200px;height: 200px;float: left;">1111</div>
+                  <div style="border-radius: 4px;border: 1px solid #eee; width: 200px;height: 200px;">2222</div>
+                </div> -->
+
+                <el-row :gutter="20" >
+                  <el-col :span="6"><div class="grid-content bg-purple" style="margin-top: 70px;float: right;">折算系数（%）</div></el-col>
+                  <el-col :span="10"><div class="grid-content bg-purple" style="border-radius: 6px;border: 1px solid #eee; width: 800px;height: 200px;">
+                    <el-form :label-position="labelPosition"  :model="formLabelAlign" :inline="true" style="width: 60%;margin-left: 20%;margin-top: 3%;">
+                      <el-form-item label="工业">
+                        <el-input-number v-model="num" size="small" controls-position="right" :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="商业" style="margin-left: 20%;">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="居民">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="充电桩" style="margin-left: 17%;">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="其他">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                    </el-form>
+                  </div></el-col>
+                </el-row>
+                <el-row :gutter="20" style="margin-top: 10px;">
+                  <el-col :span="6"><div class="grid-content bg-purple" style="margin-top: 70px;float: right;">线路最大容量（kVA）</div></el-col>
+                  <el-col :span="10"><div class="grid-content bg-purple" style="border-radius: 6px;border: 1px solid #eee; width: 800px;height: 150px;">
+                    <el-form :label-position="labelPosition"  :model="formLabelAlign" :inline="true" style="width: 60%;margin-left: 18%;margin-top: 3%;">
+                      <el-form-item label="纯工业">
+                        <el-input-number v-model="num" size="small" controls-position="right" :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="纯商业" style="margin-left: 17%;">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="纯居民">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="纯快充电桩" style="margin-left: 11%;">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                    </el-form>
+                  </div></el-col>
+                </el-row>
+                <el-row :gutter="20" style="margin-top: 10px;">
+                  <el-col :span="6"><div class="grid-content bg-purple" style="margin-top: 70px;float: right;">自动化覆盖率要求（%）</div></el-col>
+                  <el-col :span="10"><div class="grid-content bg-purple" style="border-radius: 6px;border: 1px solid #eee; width: 800px;height: 150px;">
+                    <el-form :label-position="labelPosition"  :model="formLabelAlign" :inline="true" style="width: 70%;margin-left: 14%;margin-top: 3%;">
+                      <el-form-item label="A+类供电区">
+                        <el-input-number v-model="num" size="small" controls-position="right" :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="A类供电区" style="margin-left: 10%;">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="B类供电区" style="margin-left: 2%;">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                    </el-form>
+                  </div></el-col>
+                </el-row>
+                <el-form :inline="true" :model="formInline" style="margin-left: 18%;margin-top: 10px;">
+                  <el-form-item label="电缆接入阈值">
+                    <el-input v-model="formInline.user" size="small" placeholder="电缆接入阈值" style="margin-left: 20%;"><template slot="append">m</template></el-input>
+                  </el-form-item>
+                  <el-form-item label="顶管阈值" style="margin-left: 12%;">
+                    <el-input v-model="formInline.user" size="small" placeholder="顶管阈值" style="margin-left: 20%;"><template slot="append">m</template></el-input>
+                  </el-form-item>
+                </el-form>
+              </el-collapse-item>
+              <el-collapse-item title="环网柜参数配置" name="2">
+                <el-row :gutter="20" >
+                  <el-col :span="6"><div class="grid-content bg-purple" style="margin-top: 70px;float: right;">A+类供电区</div></el-col>
+                  <el-col :span="10"><div class="grid-content bg-purple" style="border-radius: 6px;border: 1px solid #eee; width: 1100px;height: 200px;">
+                    <el-form :label-position="labelPosition"  :model="formLabelAlign" :inline="true" style="width: 100%;margin-left: 2%;margin-top: 2%;">
+                      <el-form-item label="工业负荷">
+                        <el-input v-model="formInline.user" size="small" placeholder="工业负荷" style="width: 150px;margin-top: 3%;"><template slot="append">MW</template></el-input></el-form-item>
+                      <el-form-item label="调整系数">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="容量">
+                        <el-input v-model="formInline.user" size="small" placeholder="容量" style="width: 150px;margin-top: 3%;"><template slot="append">kVA</template></el-input></el-form-item>
+                      </el-form-item>
+                      <el-form-item label="调整系数" >
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="用户数">
+                        <el-input v-model="formInline.user" size="small" placeholder="用户数" style="width: 150px;margin-top: 3%;"><template slot="append">户</template></el-input> </el-form-item>
+                      </el-form-item>
+                    </el-form>
+                    <el-form :label-position="labelPosition"  :model="formLabelAlign" :inline="true" style="width: 100%;margin-left: 2%;">
+                      <el-form-item label="商业负荷">
+                        <el-input v-model="formInline.user" size="small" placeholder="工业负荷" style="width: 150px;margin-top: 3%;"><template slot="append">MW</template></el-input></el-form-item>
+                      <el-form-item label="调整系数">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="容量">
+                        <el-input v-model="formInline.user" size="small" placeholder="容量" style="width: 150px;margin-top: 3%;"><template slot="append">kVA</template></el-input></el-form-item>
+                      </el-form-item>
+                      <el-form-item label="调整系数" >
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="用户数">
+                        <el-input v-model="formInline.user" size="small" placeholder="用户数" style="width: 150px;margin-top: 3%;"><template slot="append">户</template></el-input> </el-form-item>
+                      </el-form-item>
+                    </el-form>
+                    <el-form :label-position="labelPosition"  :model="formLabelAlign" :inline="true" style="width: 100%;margin-left: 2%;">
+                      <el-form-item label="居民负荷">
+                        <el-input v-model="formInline.user" size="small" placeholder="工业负荷" style="width: 150px;margin-top: 3%;"><template slot="append">MW</template></el-input></el-form-item>
+                      <el-form-item label="调整系数">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="容量">
+                        <el-input v-model="formInline.user" size="small" placeholder="容量" style="width: 150px;margin-top: 3%;"><template slot="append">kVA</template></el-input></el-form-item>
+                      </el-form-item>
+                      <el-form-item label="调整系数" >
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="用户数">
+                        <el-input v-model="formInline.user" size="small" placeholder="用户数" style="width: 150px;margin-top: 3%;"><template slot="append">户</template></el-input> </el-form-item>
+                      </el-form-item>
+                    </el-form>
+                  </div></el-col>
+                </el-row>
+                <el-row :gutter="20" style="margin-top: 10px;">
+                  <el-col :span="6"><div class="grid-content bg-purple" style="margin-top: 70px;float: right;">A、B类供电区</div></el-col>
+                  <el-col :span="10"><div class="grid-content bg-purple" style="border-radius: 6px;border: 1px solid #eee; width: 1100px;height: 200px;">
+                    <el-form :label-position="labelPosition"  :model="formLabelAlign" :inline="true" style="width: 100%;margin-left: 2%;margin-top: 2%;">
+                      <el-form-item label="工业负荷">
+                        <el-input v-model="formInline.user" size="small" placeholder="工业负荷" style="width: 150px;margin-top: 3%;"><template slot="append">MW</template></el-input></el-form-item>
+                      <el-form-item label="调整系数">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="容量">
+                        <el-input v-model="formInline.user" size="small" placeholder="容量" style="width: 150px;margin-top: 3%;"><template slot="append">kVA</template></el-input></el-form-item>
+                      </el-form-item>
+                      <el-form-item label="调整系数" >
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="用户数">
+                        <el-input v-model="formInline.user" size="small" placeholder="用户数" style="width: 150px;margin-top: 3%;"><template slot="append">户</template></el-input> </el-form-item>
+                      </el-form-item>
+                    </el-form>
+                    <el-form :label-position="labelPosition"  :model="formLabelAlign" :inline="true" style="width: 100%;margin-left: 2%;">
+                      <el-form-item label="商业负荷">
+                        <el-input v-model="formInline.user" size="small" placeholder="工业负荷" style="width: 150px;margin-top: 3%;"><template slot="append">MW</template></el-input></el-form-item>
+                      <el-form-item label="调整系数">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="容量">
+                        <el-input v-model="formInline.user" size="small" placeholder="容量" style="width: 150px;margin-top: 3%;"><template slot="append">kVA</template></el-input></el-form-item>
+                      </el-form-item>
+                      <el-form-item label="调整系数" >
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="用户数">
+                        <el-input v-model="formInline.user" size="small" placeholder="用户数" style="width: 150px;margin-top: 3%;"><template slot="append">户</template></el-input> </el-form-item>
+                      </el-form-item>
+                    </el-form>
+                    <el-form :label-position="labelPosition"  :model="formLabelAlign" :inline="true" style="width: 100%;margin-left: 2%;">
+                      <el-form-item label="居民负荷">
+                        <el-input v-model="formInline.user" size="small" placeholder="工业负荷" style="width: 150px;margin-top: 3%;"><template slot="append">MW</template></el-input></el-form-item>
+                      <el-form-item label="调整系数">
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="容量">
+                        <el-input v-model="formInline.user" size="small" placeholder="容量" style="width: 150px;margin-top: 3%;"><template slot="append">kVA</template></el-input></el-form-item>
+                      </el-form-item>
+                      <el-form-item label="调整系数" >
+                        <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                      </el-form-item>
+                      <el-form-item label="用户数">
+                        <el-input v-model="formInline.user" size="small" placeholder="用户数" style="width: 150px;margin-top: 3%;"><template slot="append">户</template></el-input> </el-form-item>
+                      </el-form-item>
+                    </el-form>
+                  </div></el-col>
+                </el-row>
+              </el-collapse-item>
+              <el-collapse-item title="新建环网柜参数配置" name="3">
+                <el-form :label-position="labelPosition"  :model="formLabelAlign" :inline="true" style="width: 70%;margin-left: 18%;margin-top: 10px;">
+                  <el-form-item label="A+类供电区节点数调整" >
+                    <el-input-number v-model="num" size="small" controls-position="right" :min="1" :max="10"></el-input-number>
+                  </el-form-item>
+                  <el-form-item label="A类供电区节点数调整" style="margin-left: 5%;">
+                    <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                  </el-form-item>
+                  <el-form-item label="B类供电区节点数调整"  style="margin-left: 5%;">
+                    <el-input-number v-model="num" size="small" controls-position="right"  :min="1" :max="10"></el-input-number>
+                  </el-form-item>
+                </el-form>
+              </el-collapse-item>
+            </el-collapse>
+
+            
+
+<!-- 
+            <el-form ref="form" :model="form" label-width="36%">
+
+                <el-form-item label-position="right" label-width="85%">
+                    <el-button type="primary" @click="onSubmit">确认</el-button>
+                    <el-button>取消</el-button>
+                  </el-form-item>
+
+                <div style="border: 1px solid #eee;padding-top: 15px; width: 650px;margin-left: 300px;">
+
+                <el-form-item label="报装号">
+                  <el-input v-model="form.no" style="width: 300px;"></el-input>
+                </el-form-item>
+                <el-form-item label="业扩类型">
+                  <el-select v-model="form.type" placeholder="请选择">
+                    <el-option label="新增" value="create"></el-option>
+                    <el-option label="增容" value="add"></el-option>
+                    <el-option label="减容" value="subtract"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="业扩期限">
+                    <el-select v-model="form.timeLimit" placeholder="请选择">
+                      <el-option label="永久" value="permanent"></el-option>
+                      <el-option label="临时" value="temporary"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  
+                <el-form-item label="用户名称">
+                    <el-input v-model="form.name" style="width: 300px;"></el-input>
+                  </el-form-item>
+
+                  <el-form-item label="报装容量">
+                    <el-input v-model="form.capacity" style="width: 300px;"><template slot="append">kVA</template></el-input>
+                  </el-form-item>
+
+                  <el-form-item label="变压器容量构成">
+                    <el-input v-model="form.constitute" style="width: 300px;"></el-input>
+                  </el-form-item>
+
+                  <el-form-item label="供电区域类型">
+                    <el-select v-model="form.areaType" placeholder="请选择">
+                      <el-option label="A+" value="A+"></el-option>
+                      <el-option label="A" value="A"></el-option>
+                      <el-option label="B" value="B"></el-option>
+                    </el-select>
+                  </el-form-item>
+
+                  <el-form-item label="报装位置">
+                    <el-input v-model="form.position" style="width: 300px;"><el-button slot="append" icon="el-icon-map-location"></el-button></el-input>
+                  </el-form-item>
+
+                  <el-form-item label="负荷性质">
+                    <el-select v-model="form.loadType" placeholder="请选择">
+                      <el-option label="工业" value="1"></el-option>
+                      <el-option label="商业" value="2"></el-option>
+                      <el-option label="居民" value="3"></el-option>
+                      <el-option label="充电桩" value="4"></el-option>
+                      <el-option label="综合" value="5"></el-option>
+                    </el-select>
+                  </el-form-item>
+
+                  <el-form-item label="是否提供供电房">
+                    <el-radio-group v-model="form.isProvide">
+                      <el-radio label="1">是</el-radio>
+                      <el-radio label="2">否</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                  <el-form-item label="双电源容量">
+                    <el-input v-model="form.doubleCapacity" style="width: 300px;"></el-input>
+                  </el-form-item>
+
+                </div>
+              </el-form> -->
+
+
+          </el-tab-pane>
+        </el-tabs>
+      </template>
+
+
+
+</div>
+</body>
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+var Main = {
+    data() {
+      return {
+        labelPosition: 'right',
+        activeName: 'first',
+        activeNames: ['1','2','3'],
+        num: 1,
+        formLabelAlign: {
+          name: '',
+          region: '',
+          type: ''
+        },
+        formInline: {
+          user: '',
+          user1: ''
+        },
+        form: {
+          name: '11',
+          region: '',
+          date1: '',
+          date2: '',
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: '',
+          isProvide: "2"
+        }
+      };
+    }
+  };
+var Ctor = Vue.extend(Main)
+new Ctor().$mount('#app')
+</script>
+</html>

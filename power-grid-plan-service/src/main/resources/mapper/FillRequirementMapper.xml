@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.power.grid.plan.mapper.FillRequirementMapper">
+    <resultMap id="BaseResultMap" type="com.power.grid.plan.pojo.FillRequirementPo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="need_no" jdbcType="VARCHAR" property="needNo"/>
+        <result column="need_name" jdbcType="VARCHAR" property="needName"/>
+        <result column="need_capacity" jdbcType="INTEGER" property="needCapacity"/>
+        <result column="transformer_constitute" jdbcType="VARCHAR" property="transformerConstitute"/>
+        <result column="location_name" jdbcType="VARCHAR" property="locationName"/>
+        <result column="longitude" jdbcType="DOUBLE" property="longitude"/>
+        <result column="latitude" jdbcType="DOUBLE" property="latitude"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="double_power" jdbcType="INTEGER" property="doublePower"/>
+        <result column="double_capacity" jdbcType="INTEGER" property="doubleCapacity"/>
+        <result column="biz_type" jdbcType="INTEGER" property="bizType"/>
+        <result column="biz_term" jdbcType="INTEGER" property="bizTerm"/>
+        <result column="area" jdbcType="INTEGER" property="area"/>
+        <result column="electric_room_nos" jdbcType="VARCHAR" property="electricRoomNos"/>
+        <result column="sensitivity_level" jdbcType="INTEGER" property="sensitivityLevel"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="is_deleted" jdbcType="INTEGER" property="isDeleted"/>
+        <result column="ts" jdbcType="TIMESTAMP" property="ts"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, need_no, need_name, need_capacity, transformer_constitute, location_name, longitude, 
+    latitude, type, double_power, double_capacity, biz_type, biz_term, area, electric_room_nos, 
+    sensitivity_level, create_time, create_user, update_time, update_user, is_deleted, 
+    ts
+  </sql>
+    <select id="selectList" parameterType="com.power.grid.plan.pojo.FillRequirementPo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from YK_XQ
+    </select>
+
+    <select id="selectOne" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from YK_XQ
+        where need_no = #{needNo,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.power.grid.plan.pojo.FillRequirementPo">
+        <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into YK_XQ (need_no, need_name, need_capacity,
+        transformer_constitute, location_name, longitude,
+        latitude, type, double_power,
+        double_capacity, biz_type, biz_term,
+        area, electric_room_nos, sensitivity_level,
+        create_time, create_user, update_time,
+        update_user
+        )
+        values ( #{needNo,jdbcType=VARCHAR}  , #{needName,jdbcType=VARCHAR}, #{needCapacity,jdbcType=INTEGER},
+        #{transformerConstitute,jdbcType=VARCHAR}, #{locationName,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE},
+        #{latitude,jdbcType=DOUBLE}, #{type,jdbcType=INTEGER}, #{doublePower,jdbcType=INTEGER},
+        #{doubleCapacity,jdbcType=INTEGER}, #{bizType,jdbcType=INTEGER}, #{bizTerm,jdbcType=INTEGER},
+        #{area,jdbcType=INTEGER}, #{electricRoomNos,jdbcType=VARCHAR}, #{sensitivityLevel,jdbcType=INTEGER},
+        #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP},
+        #{updateUser,jdbcType=VARCHAR}
+        )
+    </insert>
+
+
+    <update id="updateOne" parameterType="com.power.grid.plan.pojo.FillRequirementPo">
+        update YK_XQ
+        <set>
+            <if test="needName != null">
+                need_name = #{needName,jdbcType=VARCHAR},
+            </if>
+            <if test="needCapacity != null">
+                need_capacity = #{needCapacity,jdbcType=INTEGER},
+            </if>
+            <if test="transformerConstitute != null">
+                transformer_constitute = #{transformerConstitute,jdbcType=VARCHAR},
+            </if>
+            <if test="locationName != null">
+                location_name = #{locationName,jdbcType=VARCHAR},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude,jdbcType=DOUBLE},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="doublePower != null">
+                double_power = #{doublePower,jdbcType=INTEGER},
+            </if>
+            <if test="doubleCapacity != null">
+                double_capacity = #{doubleCapacity,jdbcType=INTEGER},
+            </if>
+            <if test="bizType != null">
+                biz_type = #{bizType,jdbcType=INTEGER},
+            </if>
+            <if test="bizTerm != null">
+                biz_term = #{bizTerm,jdbcType=INTEGER},
+            </if>
+            <if test="area != null">
+                area = #{area,jdbcType=INTEGER},
+            </if>
+            <if test="electricRoomNos != null">
+                electric_room_nos = #{electricRoomNos,jdbcType=VARCHAR},
+            </if>
+            <if test="sensitivityLevel != null">
+                sensitivity_level = #{sensitivityLevel,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=INTEGER},
+            </if>
+            <if test="ts != null">
+                ts = #{ts,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where need_no = #{needNo,jdbcType=VARCHAR}
+    </update>
+</mapper>

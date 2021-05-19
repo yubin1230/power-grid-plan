@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <style>
+
+
+  </style>
+</head>
+
+<body>
+  <div id="app">
+
+    <template>
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="人工介入" name="first">
+          <div style="float: right; padding: 3px 0">
+            <el-button type="primary">下一步</el-button>
+            <el-button>上一步</el-button>
+          </div>
+
+        </el-tab-pane>
+      </el-tabs>
+    </template>
+
+
+    <div id="bdmap" style="width:1800px;height:820px;overflow: hidden;margin:0;font-family:'微软雅黑';margin-left: 50px;">
+
+    </div>
+
+  </div>
+
+
+</body>
+<!-- <script src="http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b"></script> -->
+
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script type="module">
+  var Main = {
+    data() {
+      return {
+        activeName: 'first'
+      };
+    },
+    mounted() {
+      this.initMap();
+    },
+    methods: {
+      initMap() {
+        loadBMap();
+      }
+    }
+  };
+  var Ctor = Vue.extend(Main)
+  new Ctor().$mount('#app')
+
+  /**
+   * @description 加载百度地图相关资源js
+   * @param {string} ak
+   */
+  export default function loadBMap(ak) {
+    return new Promise((resolve, reject) => {
+      asyncLoadBaiduJs(ak)
+        .catch(err => {
+          reject(err)
+        });
+    })
+  }
+
+  /**
+   * @description 加载百度地图基础组件js
+   * @param {string} ak
+   */
+  export function asyncLoadBaiduJs() {
+    return new Promise((resolve, reject) => {
+      if (typeof BMap !== 'undefined') {
+        resolve(BMap)
+        return true
+      }
+      window.onBMapCallback = function () {
+        var map = new BMapGL.Map('bdmap'); // 创建Map实例
+        var point = new BMapGL.Point(116.404, 39.915); // 创建点坐标
+        map.centerAndZoom(point, 14);
+        map.enableScrollWheelZoom(); // 启用滚轮放大缩小
+        initPoint(map);
+      }
+      let script = document.createElement('script')
+      script.type = 'text/javascript'
+      script.src = 'http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b&callback=onBMapCallback'
+      script.onerror = reject
+      document.head.appendChild(script)
+    })
+  }
+
+  export function initPoint(map) {
+    // 创建点标记
+    var marker1 = new BMapGL.Marker(new BMapGL.Point(116.404, 39.925));
+    var marker2 = new BMapGL.Marker(new BMapGL.Point(116.404, 39.915));
+    var marker3 = new BMapGL.Marker(new BMapGL.Point(116.395, 39.935));
+    var marker4 = new BMapGL.Marker(new BMapGL.Point(116.415, 39.931));
+
+
+    var opts1 = {
+      position: new BMapGL.Point(116.404, 39.925), // 指定文本标注所在的地理位置
+      offset: new BMapGL.Size(-30, 5) // 设置文本偏移量
+    };
+    var opts2 = {
+      position: new BMapGL.Point(116.404, 39.915), // 指定文本标注所在的地理位置
+      offset: new BMapGL.Size(-30, 5) // 设置文本偏移量
+    };
+    var opts3 = {
+      position: new BMapGL.Point(116.395, 39.935), // 指定文本标注所在的地理位置
+      offset: new BMapGL.Size(-30, 5) // 设置文本偏移量
+    };
+    var opts4 = {
+      position: new BMapGL.Point(116.415, 39.931), // 指定文本标注所在的地理位置
+      offset: new BMapGL.Size(-30, 5) // 设置文本偏移量
+    };
+    // 创建文本标注对象
+    var label1 = new BMapGL.Label('候选点1', opts1);
+    var label2 = new BMapGL.Label('候选点2', opts2);
+    var label3 = new BMapGL.Label('候选点3', opts3);
+    var label4 = new BMapGL.Label('候选点4', opts4);
+
+    // 自定义文本标注样式
+    label1.setStyle({
+      color: 'blue',
+      borderRadius: '5px',
+      borderColor: '#ccc',
+      padding: '10px',
+      fontSize: '12px',
+      height: '20px',
+      lineHeight: '20px',
+      fontFamily: '微软雅黑'
+    });
+    label2.setStyle({
+      color: 'blue',
+      borderRadius: '5px',
+      borderColor: '#ccc',
+      padding: '10px',
+      fontSize: '12px',
+      height: '20px',
+      lineHeight: '20px',
+      fontFamily: '微软雅黑'
+    });
+    label3.setStyle({
+      color: 'blue',
+      borderRadius: '5px',
+      borderColor: '#ccc',
+      padding: '10px',
+      fontSize: '12px',
+      height: '20px',
+      lineHeight: '20px',
+      fontFamily: '微软雅黑'
+    });
+    label4.setStyle({
+      color: 'blue',
+      borderRadius: '5px',
+      borderColor: '#ccc',
+      padding: '10px',
+      fontSize: '12px',
+      height: '20px',
+      lineHeight: '20px',
+      fontFamily: '微软雅黑'
+    });
+
+    // 在地图上添加点标记
+    map.addOverlay(marker1);
+    map.addOverlay(marker2);
+    map.addOverlay(marker3);
+    map.addOverlay(marker4);
+
+    map.addOverlay(label1);
+    map.addOverlay(label2);
+    map.addOverlay(label3);
+    map.addOverlay(label4);
+
+  }
+
+</script>
+
+</html>

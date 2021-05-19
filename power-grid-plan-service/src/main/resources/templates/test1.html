@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+  <style>
+
+  .el-carousel__item h3 {
+    color: #475669;
+    font-size: 18px;
+    opacity: 0.75;
+    line-height: 300px;
+    margin: 0;
+  }
+  
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+  
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+  }
+  </style>
+</head>
+
+<body style="width: 800px;height: 500px;text-align:center;">
+  <div id="app">
+    <div id="planList">
+
+      <template>
+        <el-carousel indicator-position="outside">
+          <el-carousel-item v-for="item in 4" :key="item">
+            <h3>{{ item }}</h3>
+          </el-carousel-item>
+        </el-carousel>
+      </template>
+    
+    </div>
+
+
+
+  </div>
+</body>
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+  var Main = {
+    data() {
+      return {
+        labelPosition: 'right',
+        activeName: 'first',
+        tableData: [{
+          scheme: '方案一',
+          area: 'A+',
+          budget: '450',
+          distance: '2.5',
+          planNo: 'L2FT03-FTJ017'
+        }, {
+          scheme: '方案二',
+          area: 'A+',
+          budget: '300',
+          distance: '3.5',
+          planNo: 'L2FT03-FTJ017'
+        }, {
+          scheme: '方案三',
+          area: 'A',
+          budget: '800',
+          distance: '7.6',
+          planNo: 'L2FT03-FTJ017'
+        }, {
+          scheme: '方案四',
+          area: 'B',
+          budget: '2400',
+          distance: '12.5',
+          planNo: 'L2FT03-FTJ017'
+        }]
+      };
+    }
+  };
+  var Ctor = Vue.extend(Main)
+  new Ctor().$mount('#app')
+</script>
+
+</html>

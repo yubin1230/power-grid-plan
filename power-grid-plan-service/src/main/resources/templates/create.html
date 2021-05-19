@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .text {
+            font-size: 14px;
+        }
+
+        .item {
+            padding: 18px 0;
+        }
+
+        .box-card {
+            width: 480px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="app">
+    <template>
+        <el-tabs v-model="activeName">
+            <el-tab-pane label="新增负荷报装需求" name="first">
+
+                <el-form ref="form" :model="form" :rules="rules" label-width="36%" class="demo-ruleForm">
+
+                    <el-form-item label-position="right" label-width="85%">
+                        <el-button type="primary" @click="onSubmit">确认</el-button>
+                        <el-button>取消</el-button>
+                    </el-form-item>
+
+                    <div style="border: 1px solid #eee;padding-top: 15px; width: 650px;margin-left: 300px;">
+
+                        <el-form-item label="报装号">
+                            <el-input v-model="form.no" style="width: 300px;" :disabled="true"></el-input>
+                        </el-form-item>
+                        <el-form-item label="业扩类型" prop="bizType">
+                            <el-select v-model="form.bizType" placeholder="请选择">
+                                <el-option label="新增" value="0"></el-option>
+                                <el-option label="增容" value="1"></el-option>
+                                <el-option label="减容" value="2"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="业扩期限" prop="bizTerm">
+                            <el-select v-model="form.bizTerm" placeholder="请选择">
+                                <el-option label="永久" value="0"></el-option>
+                                <el-option label="临时" value="1"></el-option>
+                            </el-select>
+                        </el-form-item>
+
+                        <el-form-item label="用户名称" prop="needName">
+                            <el-input v-model="form.needName" style="width: 300px;"></el-input>
+                        </el-form-item>
+
+                        <el-form-item label="报装容量" prop="needCapacity">
+                            <el-input type="needCapacity" v-model.number="form.needCapacity" autocomplete="off"
+                                      style="width: 300px;">
+                                <template slot="append">kVA</template>
+                            </el-input>
+                        </el-form-item>
+
+                        <el-form-item label="变压器容量构成">
+                            <el-input v-model="form.transformerConstitute" style="width: 300px;">
+                                <template
+                                        slot="append">kVA
+                                </template>
+                            </el-input>
+                        </el-form-item>
+
+                        <el-form-item label="供电区域类型" prop="area">
+                            <el-select v-model="form.area" placeholder="请选择">
+                                <el-option label="A+" value="0"></el-option>
+                                <el-option label="A" value="1"></el-option>
+                                <el-option label="B" value="2"></el-option>
+                            </el-select>
+                        </el-form-item>
+
+                        <el-form-item label="报装位置" prop="locationName">
+                            <el-input v-model="form.locationName" style="width: 300px;" :disabled="true">
+                                <el-button type="primary" slot="append" icon="el-icon-map-location"
+                                           @click="choicePosition">
+                                </el-button>
+                            </el-input>
+
+                        </el-form-item>
+
+                        <el-form-item label="经度" style="display: none">
+                            <el-input v-model="form.longitude"></el-input>
+                        </el-form-item>
+
+                        <el-form-item label="纬度" style="display: none">
+                            <el-input v-model="form.latitude"></el-input>
+                        </el-form-item>
+
+                        <el-form-item label="负荷性质" prop="type">
+                            <el-select v-model="form.type" placeholder="请选择">
+                                <el-option label="工业" value="0"></el-option>
+                                <el-option label="商业" value="1"></el-option>
+                                <el-option label="居民" value="2"></el-option>
+                                <el-option label="充电桩" value="3"></el-option>
+                                <el-option label="综合" value="4"></el-option>
+                            </el-select>
+                        </el-form-item>
+
+                        <el-form-item label="是否提供供电房">
+                            <el-radio-group v-model="form.isProvide" @change="provideChange">
+                                <el-radio label="1">是</el-radio>
+                                <el-radio label="2">否</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+
+
+                        <el-form-item label="电房" v-show="isShow1">
+                            <el-select v-model="form.electricRoom" multiple collapse-tags style="margin-left: 20px;"
+                                       placeholder="请选择">
+                                <el-option v-for="item in form.electricRooms" :key="item.value" :label="item.label"
+                                           :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+
+                        <el-form-item label="双电源容量">
+                            <el-input v-model="form.doubleCapacity" style="width: 300px;"></el-input>
+                        </el-form-item>
+
+                        <el-form-item label="是否属于电能质量敏感用户">
+                            <el-radio-group v-model="form.isSensitive" @change="sensitiveChange" :clearable="true">
+                                <el-radio label="1">是</el-radio>
+                                <el-radio label="2">否</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+
+
+                        <el-form-item label="用户电能质量敏感级别" v-show="isShow2">
+
+                            <el-select v-model="form.sensitivityLevel" placeholder="请选择" :clearable="true">
+                                <el-option v-for="item in form.sensitiveLevels" :key="item.value" :label="item.label"
+                                           :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+
+                    </div>
+                </el-form>
+
+
+            </el-tab-pane>
+        </el-tabs>
+    </template>
+
+
+    <el-dialog title="地图" :visible.sync="showMap" width="1300px" height="450px" :append-to-body="true"
+               @closed="closeMap" style="height: 700px; overflow: hidden;" :close-on-click-modal="false"
+               :close-on-press-escape="false">
+        <div style="margin-left: 1000px;margin-top: 50px;z-index: 99999;position: absolute;width: 250px;">
+            <el-input class="addressInput" v-model="addressKeyword" placeholder="请输入地址来查找相关位置" id="suggestId"
+                      @input="inputAdress">
+            </el-input>
+            <div id="searchResultPanel"
+                 style="border:0px solid #C0C0C0;width:250px;height:300px;overflow-y:scroll;display: none;">
+
+                <el-card class="box-card" shadow="hover">
+                    <div v-for="o in addressList" :key="o.uid" class="text item" @click="choice(o)"
+                         style="cursor: pointer;"
+                         :id="o.uid">
+                        <h4><i class="el-icon-place" style="margin-right: 5px;"></i>{{o.title}}</h4>
+                        {{o.address}}
+                    </div>
+                </el-card>
+
+            </div>
+        </div>
+
+        <div class="control-btn"
+             style="margin-left: 1000px;margin-top: 400px;z-index: 99999;position: absolute;width: 250px; text-align: right;">
+            <el-button type="primary" @click="checkedAddress">确 定</el-button>
+            <el-button @click="closeMap">关 闭</el-button>
+        </div>
+
+        <div id="bdmap"
+             style="width:1200px;height:450px;overflow: hidden;margin:0;font-family:'微软雅黑';margin-left: 50px;">
+
+        </div>
+    </el-dialog>
+
+
+</div>
+</body>
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script type="module">
+    var Main = {
+        data() {
+            return {
+                activeName: 'first',
+                isShow1: false,
+                isShow2: false,
+                showMap: false,
+                addressKeyword: '',
+                first: true,
+                local: null,
+                addressList: [],
+                addressTem: {},
+                form: {
+                    needName: '',
+                    locationName: '',
+                    type: '',
+                    doubleCapacity: '',
+                    transformerConstitute: '',
+                    bizType: '',
+                    bizTerm: '',
+                    area: '',
+                    longitude: 0.0,
+                    latitude: 0.0,
+                    needCapacity: '',
+                    isProvide: "2",
+                    isSensitive: "2",
+                    electricRooms: [{
+                        value: '1',
+                        label: '电房01'
+                    }, {
+                        value: '2',
+                        label: '电房02'
+                    }, {
+                        value: '3',
+                        label: '电房03'
+                    }, {
+                        value: '4',
+                        label: '电房04'
+                    }, {
+                        value: '5',
+                        label: '电房05'
+                    }],
+                    electricRoom: [],
+
+                    sensitiveLevels: [{
+                        value: '1',
+                        label: '一级'
+                    }, {
+                        value: '2',
+                        label: '二级'
+                    }, {
+                        value: '3',
+                        label: '三级'
+                    }, {
+                        value: '4',
+                        label: '四级'
+                    }, {
+                        value: '5',
+                        label: '五级'
+                    }],
+                    sensitivityLevel: ""
+                },
+                rules: {
+
+                    bizType: [
+                        {required: true, message: '请选择业扩类型', trigger: 'change'}
+                    ],
+                    bizTerm: [
+                        {required: true, message: '请选择业扩期限', trigger: 'change'}
+                    ],
+                    needName: [
+                        {required: true, message: '请输入用户名称名称', trigger: 'blur'},
+                        {min: 0, max: 10, message: '长度在 0 到 10 个字符', trigger: 'blur'}
+                    ],
+                    needCapacity: [
+                        {required: true, message: '请输入报装容量'},
+                        {type: 'number', message: '报装容量必须为数字值'}
+                    ],
+                    area: [
+                        {required: true, message: '请选择供电区域类型', trigger: 'change'}
+                    ],
+                    locationName: [
+                        {required: true, message: '请选择报装位置', trigger: 'blur'}
+                    ],
+                    type: [
+                        {required: true, message: '请选择负荷性质', trigger: 'change'}
+                    ]
+                }
+            };
+        },
+        mounted() {
+            // this.initMap()
+        },
+        methods: {
+            choice(address) {
+                $(".item").each(function () {
+                    $(this).css("background-color", "#FFFFFF");
+                });
+                $("#" + address.uid).css("background-color", '#E4E7ED');
+                this.addressTem = address;
+                choicePoint(address);
+            },
+            choicePosition() {
+                this.showMap = true;
+                if (this.first) {
+                    this.initMap(this);
+                }
+                $("#suggestId").val(this.form.position);
+                this.first = false;
+            },
+            closeMap() {
+                this.showMap = false;
+            },
+            checkedAddress() {
+                this.form.locationName = this.addressTem.title;
+                this.form.longitude = this.addressTem.point.lng;
+                this.form.latitude = this.addressTem.point.lat;
+                this.showMap = false;
+            },
+            initMap(mythis) {
+                loadBMap(mythis)
+            }, inputAdress() {
+                var key = $("#suggestId").val();
+                if (key != '' || key != undefined || key != null) {
+                    local.search($("#suggestId").val());
+                    $("#searchResultPanel").show();
+                } else {
+                    $("#searchResultPanel").hide();
+                    $("#searchResultPanel").html('');
+                    map.clearOverlays();    //清除地图上所有覆盖物
+                }
+            },
+            onSubmit() {
+
+                this.$refs['form'].validate((valid) => {
+                    if (valid) {
+                        var self = this;
+                        console.log(JSON.stringify(self.form));
+                        var formObj = self.form;
+                        formObj.electricRoomNos = formObj.electricRoom.join(",").toString();
+
+                        formObj.requestNo = new Date().getTime();
+                        $.ajax({
+                            type: "post",
+                            dataType: "json",
+                            data: formObj,
+                            url: "/fillRequirement/insert",
+                            success: function (data) {
+                                if (data.code == 200) {
+                                    self.$message.success('新增成功');
+                                } else {
+                                    self.$message.error('新增失败：' + data.message);
+                                }
+                            },
+                            error: function (json) {
+                                self.$message.error('加载失败');
+                            }
+                        });
+
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            provideChange(val) {
+                let that = this;
+                this.isShow1 = (val === '1') ? true : false;
+                this.form.electricRoomNos = [];
+
+            }, sensitiveChange(val) {
+                let that = this;
+                this.isShow2 = (val === '1') ? true : false;
+                this.form.sensitivityLevel = "";
+
+            }
+        }
+    };
+    var Ctor = Vue.extend(Main)
+    new Ctor().$mount('#app')
+
+    /**
+     * @description 加载百度地图相关资源js
+     * @param {string} ak
+     */
+    function loadBMap(mythis) {
+        return new Promise((resolve, reject) => {
+            asyncLoadBaiduJs(mythis)
+                .catch(err => {
+                    reject(err)
+                })
+        })
+    }
+
+    /**
+     * @description 加载百度地图基础组件js
+     * @param {string} ak
+     */
+    var map;
+    var local;
+
+    // var addressList;
+    function asyncLoadBaiduJs(mythis) {
+        return new Promise((resolve, reject) => {
+            if (typeof BMap !== 'undefined') {
+                resolve(BMap)
+                return true
+            }
+            window.onBMapCallback = function () {
+                map = new BMapGL.Map('bdmap'); // 创建Map实例
+                var point = new BMapGL.Point(116.404, 39.915); // 创建点坐标
+                map.centerAndZoom(point, 10);
+                map.enableScrollWheelZoom(); // 启用滚轮放大缩小
+
+                local = new BMapGL.LocalSearch(map, {
+                    onSearchComplete: function (results) {
+                        map.clearOverlays();    //清除地图上所有覆盖物
+                        if (typeof (results) != 'undefined' && typeof (results._pois) != 'undefined') {
+                            mythis.addressList = results._pois;
+                            $("#searchResultPanel").show();
+                            showMap(results._pois);
+                        }
+
+                    }
+                });
+            }
+            let script = document.createElement('script')
+            script.type = 'text/javascript'
+            script.src = 'http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b&callback=onBMapCallback'
+            script.onerror = reject
+            document.head.appendChild(script)
+        })
+    }
+
+    var markerList = [];
+
+    function showMap(maps) {
+
+        var pointsView = [];
+
+        for (var i = 0; i < maps.length; i++) {
+            var point = new BMapGL.Point(maps[i].point.lng, maps[i].point.lat);
+            var marker = new BMapGL.Marker(point);
+            pointsView.push(point);
+            map.addOverlay(marker);
+            var content = "<h5>" + maps[i].title + "</h5><br /> "
+                + "地址:     " + maps[i].address + "<br /> ";
+            addClickHandler(content, marker);
+            var markerObj = {uid: maps[i].uid, marker: marker};
+            markerList.push(markerObj);
+        }
+        map.setViewport(pointsView); //将所有的点放置在最佳视野内
+
+
+    }
+
+
+    //点击事件
+    function addClickHandler(content, marker) {
+        marker.addEventListener("click", function (e) {
+            openInfo(content, e.targe);
+        });
+    }
+
+    // 创建信息窗口
+    var opts = {
+        width: 200,
+        height: 180
+    };
+
+    //生成窗体
+    function openInfo(content, p) {
+        var point = new BMapGL.Point(p.getPosition().lng, p.getPosition().lat);
+        var infoWindow = new BMapGL.InfoWindow(content, opts);  // 创建信息窗口对象
+        console.log(point);
+        map.panTo(point);
+        map.openInfoWindow(infoWindow, point);                //开启信息窗口
+    }
+
+    function choicePoint(address) {
+        for (var i = 0; i < markerList.length; i++) {
+            if (markerList[i].uid == address.uid) {
+                var content = "<h5>" + address.title + "</h5><br /> "
+                    + "地址:     " + address.address + "<br /> ";
+                openInfo(content, markerList[i].marker);
+            }
+        }
+    }
+</script>
+
+</html>

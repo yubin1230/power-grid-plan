@@ -9,7 +9,6 @@ import java.io.Serializable;
  * 版本（@version 1.0）
  * 创建、开发日期（@date 2020/6/28 14:36）
  **/
-
 public class BaseRequest implements Serializable {
 
     private static final long serialVersionUID = -3434049849262683880L;

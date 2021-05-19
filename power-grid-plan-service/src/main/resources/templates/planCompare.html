@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <style>
+    .el-drawer {
+
+      overflow: scroll
+    }
+
+    .el-row {
+      margin-bottom: 20px;
+    }
+
+    .el-col {
+      border-radius: 4px;
+      margin-top: 5px;
+      text-align: center;
+    }
+
+    .bg-purple-dark {
+      background: white;
+    }
+
+    .bg-purple {
+      background: white;
+    }
+
+    .bg-purple-light {
+      background: white;
+    }
+
+    .grid-content {
+      border-radius: 4px;
+      min-height: 36px;
+    }
+
+    .row-bg {
+      padding: 10px 0;
+      background-color: white;
+    }
+
+    .clearfix:before,
+    .clearfix:after {
+      display: table;
+      content: "";
+    }
+
+    .clearfix:after {
+      clear: both
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+
+
+
+    <template>
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="规划方案对比" name="first">
+          <div style="float: right; padding: 3px 0">
+            <el-button type="primary">下一步</el-button>
+            <el-button>上一步</el-button>
+          </div>
+
+        </el-tab-pane>
+      </el-tabs>
+    </template>
+
+
+    <div id="bdmap" style="width:1800px;height:820px;overflow: hidden;margin:0;font-family:'微软雅黑';margin-left: 50px;">
+
+    </div>
+
+
+    <div id="choice" style="margin-left: 1700px;;margin-top: -500px;z-index: 99999;position: absolute;">
+      <el-button @click="openChoice()" type="primary" style="margin-left: 16px;">
+        方案选择<i class="el-icon-arrow-left" style="margin-left: 5px;"></i>
+      </el-button>
+    </div>
+
+    <div id="compare" style="margin-left: 1700px;;margin-top: -45px;z-index: 99999;position: absolute;">
+      <el-button @click="drawer2 = true;openCompare()" type="primary" style="margin-left: 16px;">
+        指标对比<i class="el-icon-arrow-up" style="margin-left: 5px;"></i>
+      </el-button>
+    </div>
+
+    <el-drawer title="规模与投资" :visible.sync="drawer1" direction="rtl" :before-close="choiceClose">
+
+      <el-collapse v-model="activeName1" accordion>
+        <el-collapse-item title="方案一" name="1">
+
+          <el-collapse v-model="activeNames">
+            <el-collapse-item title=" 中压线路" name="1">
+
+              <!-- 
+              <el-form :model="form" ref="form" label-width="150px" class="demo-ruleForm" :inline="true">
+                <el-form-item label="用户接入线路名称：" prop="name">
+                  <span>福田变益田线</span>
+                </el-form-item>
+                <el-form-item label="线路形式：" prop="type">
+                  <span>电缆</span>
+                </el-form-item>
+                <el-form-item label="线路型号：" prop="model">
+                  <span>-</span>
+                </el-form-item>
+                </el-form-item>
+                <el-form-item label="铺设方式及投资：" prop="type">
+                  <template>
+                    <el-table :data="tableData1" style="width: 100%" stripe>
+                      <el-table-column prop="startEnd" label="起终" width="50">
+                      </el-table-column>
+                      <el-table-column prop="length" label="长度(m)" width="80">
+                      </el-table-column>
+                      <el-table-column prop="type" label="方式" width="50">
+                      </el-table-column>
+                      <el-table-column prop="price" label="投资(万元)" width="100">
+                      </el-table-column>
+                    </el-table>
+                  </template>
+
+                </el-form-item>
+                <el-form-item label="设备投资：" prop="type">
+                  <el-table :data="tableData2" style="width: 100%" stripe>
+                    <el-table-column prop="item" label="项目" width="90">
+                    </el-table-column>
+                    <el-table-column prop="num" label="数量" width="80">
+                    </el-table-column>
+                    <el-table-column prop="price" label="投资(万元)" width="100">
+                    </el-table-column>
+                  </el-table>
+                </el-form-item>
+              </el-form> -->
+
+              <el-row :gutter="20" style="margin-left: 2px;">
+                <el-col :span="10" style="text-align: left;">
+                  <span>用户接入线路名称：</span>
+                  <span>福田变益田线</span>
+                </el-col>
+                <el-col :span="10" style="text-align: left;">
+                  <span>线路形式：</span>
+                  <span>电缆</span>
+                </el-col>
+                <el-col :span="10" style="text-align: left;">
+                  <span>线路型号：</span>
+                  <span>-</span>
+                </el-col>
+                <el-col :span="10">
+                  <span>&nbsp;</span>
+                </el-col>
+                <el-col :span="12" style="text-align: left;">
+                  <span>铺设方式及投资：</span>
+                  <template>
+                    <el-table :data="tableData1" style="width: 100%" border>
+                      <el-table-column prop="startEnd" label="起终" width="50">
+                      </el-table-column>
+                      <el-table-column prop="length" label="长度(m)" width="70">
+                      </el-table-column>
+                      <el-table-column prop="type" label="方式" width="50">
+                      </el-table-column>
+                      <el-table-column prop="price" label="投资(万元)" width="90">
+                      </el-table-column>
+                    </el-table>
+                  </template>
+                </el-col>
+                <el-col :span="12" style="text-align: left;">
+                  <span>设备投资：</span>
+                  <template>
+                    <el-table :data="tableData2" style="width: 100%" border>
+                      <el-table-column prop="item" label="项目" width="90">
+                      </el-table-column>
+                      <el-table-column prop="num" label="数量" width="80">
+                      </el-table-column>
+                      <el-table-column prop="price" label="投资(万元)" width="90">
+                      </el-table-column>
+                    </el-table>
+                  </template>
+                </el-col>
+              </el-row>
+
+
+            </el-collapse-item>
+            <el-collapse-item title="低压线路" name="2">
+              <el-row :gutter="20">
+                <el-col :span="10">
+                  <div class="grid-content bg-purple">配变：1台</div>
+                </el-col>
+                <el-col :span="10">
+                  <div class="grid-content bg-purple">三要点：1个</div>
+                </el-col>
+                <el-col :span="10">
+                  <div class="grid-content bg-purple">配电站：1座</div>
+                </el-col>
+                <el-col :span="10">
+                  <div class="grid-content bg-purple">低压开关柜：5面</div>
+                </el-col>
+                <el-col :span="10">
+                  <div class="grid-content bg-purple">断路器：2个</div>
+                </el-col>
+              </el-row>
+            </el-collapse-item>
+            <el-collapse-item title="补录费用事项" name="3">
+              <template>
+                <el-tabs v-model="activeName2">
+                  <el-tab-pane label="中压线路" name="first">
+                    <el-form ref="form" :model="form" label-width="200px">
+
+                      <el-form-item label="电缆" label-position="right">
+                        <el-col :span="7">
+                          <el-input v-model="form.model" placeholder="规格"></el-input>
+                        </el-col>
+                        <el-col class="line" :span="1">&nbsp;&nbsp;</el-col>
+                        <el-col :span="7">
+                          <el-input v-model="form.length" placeholder="长度"></el-input>
+                        </el-col>
+                      </el-form-item>
+                      <el-form-item label="架空线（单回路径长）" label-position="right">
+                        <el-col :span="7">
+                          <el-input v-model="form.model" placeholder="规格"></el-input>
+                        </el-col>
+                        <el-col class="line" :span="1">&nbsp;&nbsp;</el-col>
+                        <el-col :span="7">
+                          <el-input v-model="form.length" placeholder="长度"></el-input>
+                        </el-col>
+                      </el-form-item>
+
+                      <el-form-item label="合计(km)" prop="name1" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="开关柜（面）" prop="name2" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="户外开关箱（台）" prop="name3" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="柱上开关(台)" prop="name4" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="电缆通道(km)（新建管长）" prop="name5" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                    </el-form>
+                  </el-tab-pane>
+                  <el-tab-pane label="低压线路" name="second">
+                    <el-form ref="form" :model="form" label-width="200px">
+
+                      <el-form-item label="配变(台)" prop="name1" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="容量(千伏安)" prop="name2" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="台区(个)" prop="name3" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="低压线(km)" prop="name4" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="低压开关柜(面)" prop="name5" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="电缆沟道（km）(新建管长)" prop="name5" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="无功补偿(千乏)" prop="name5" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="电能表(只)" prop="name5" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="配电站(座)" prop="name5" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                    </el-form>
+                  </el-tab-pane>
+                  <el-tab-pane label="营销技改" name="third">
+                    <el-form ref="form" :model="form" label-width="200px">
+
+                      <el-form-item label="表箱(个)" label-position="right">
+                        <el-col :span="7">
+                          <el-input v-model="form.model" placeholder="三相表"></el-input>
+                        </el-col>
+                        <el-col class="line" :span="1">&nbsp;&nbsp;</el-col>
+                        <el-col :span="7">
+                          <el-input v-model="form.length" placeholder="单相表"></el-input>
+                        </el-col>
+                      </el-form-item>
+
+                      <el-form-item label="表前线(km)" prop="name1" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="采集器(个)" prop="name2" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="集中器(个)" prop="name3" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="配变检测计量终端(个)" prop="name4" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="电流互感器(套)" prop="name5" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                    </el-form>
+
+                  </el-tab-pane>
+                  <el-tab-pane label="配网自动化" name="fourth">
+
+                    <el-form ref="form" :model="form" label-width="220px">
+
+                      <el-form-item label="新增自动化有效覆盖线路回数(回)" prop="name1" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="新增三遥点数(个)" prop="name2" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="断路器个数" label-position="right">
+                        <el-col :span="7">
+                          <el-input v-model="form.model" placeholder="分段断路器个数(个)"></el-input>
+                        </el-col>
+                        <el-col class="line" :span="1">&nbsp;&nbsp;</el-col>
+                        <el-col :span="7">
+                          <el-input v-model="form.length" placeholder="分界断路器"></el-input>
+                        </el-col>
+                      </el-form-item>
+                    </el-form>
+
+                  </el-tab-pane>
+                  <el-tab-pane label="配网通信" name="five">
+
+
+                    <el-form ref="form" :model="form" label-width="240px">
+
+
+                      <el-form-item label="光纤配自节点总量" label-position="right">
+                        <el-col :span="7">
+                          <el-input v-model="form.model" placeholder="光纤(km)"></el-input>
+                        </el-col>
+                        <el-col class="line" :span="1">&nbsp;&nbsp;</el-col>
+                        <el-col :span="7">
+                          <el-input v-model="form.length" placeholder="通信设备(台)"></el-input>
+                        </el-col>
+                      </el-form-item>
+
+                      <el-form-item label="新增覆盖自动化点位和公变台区数(个)" prop="name2" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                    </el-form>
+
+                  </el-tab-pane>
+                  <el-tab-pane label="智能电房" name="six">
+
+                    <el-form ref="form" :model="form" label-width="240px">
+
+                      <el-form-item label="同步或专项建设智能配电房座数(座)" prop="name1" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="同步或专项建设智能台区个数(个)" prop="name2" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="同步或专项建设智能电缆沟设备(个)" prop="name3" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                      <el-form-item label="同步或专项建设储能微电网(MkWh)" prop="name4" label-position="right">
+                        <el-input v-model="form.name" style="width: 200px;"></el-input>
+                      </el-form-item>
+                    </el-form>
+
+                  </el-tab-pane>
+                </el-tabs>
+              </template>
+            </el-collapse-item>
+          </el-collapse>
+          <el-tag style="margin-top: 6px;margin-left: 20px;">投资估算：980.03万元</el-tag>
+          <el-switch v-model="value2" active-color="#13ce66" inactive-color="#ff4949" inactive-text="设置为最优方案"
+            style="margin-left: 200px;">
+          </el-switch>
+        </el-collapse-item>
+        <el-collapse-item title="方案二" name="2">
+          <div>方案二</div>
+        </el-collapse-item>
+        <el-collapse-item title="方案三" name="3">
+          <div>方案三</div>
+        </el-collapse-item>
+      </el-collapse>
+
+    </el-drawer>
+    <el-drawer title="指标对比" :visible.sync="drawer2" direction="btt" :before-close="compareClose" :size="size">
+      <template>
+        <el-table :data="tableData3" style="width: 100%" stripe>
+          <el-table-column prop="diffItem" label="对比项" width="140">
+          </el-table-column>
+          <el-table-column prop="sumInvestment" label="投资费用（万元）" width="140">
+          </el-table-column>
+
+          <el-table-column label="线路">
+            <el-table-column prop="lineDebtRatio" label="负债率" width="120">
+            </el-table-column>
+            <el-table-column prop="openCapacity" label="可开放容量(MW)" width="120">
+            </el-table-column>
+          </el-table-column>
+          <el-table-column prop="terminalVoltage" label="末端电压(kV)" width="130">
+          </el-table-column>
+          <el-table-column prop="lineLoss" label="线损率(%)" width="130">
+          </el-table-column>
+          <el-table-column label="接入点">
+            <el-table-column prop="nodeAvailability" label="供电可靠率(%)" width="120">
+            </el-table-column>
+            <el-table-column prop="nodeAverageOutageTime" label="户均停电时间(分钟)" width="120">
+            </el-table-column>
+          </el-table-column>
+          <el-table-column label="线路">
+            <el-table-column prop="lineAvailability" label="供电可靠率(%)" width="120">
+            </el-table-column>
+            <el-table-column prop="lineAverageOutageTime" label="户均停电时间(分钟)" width="120">
+            </el-table-column>
+          </el-table-column>
+          <el-table-column prop="powerFailureLoss" label="停电损失费用变化值（万元）" width="130">
+          </el-table-column>
+          <el-table-column prop="runtimeLoss" label="运行费用（损耗）变化值（万元）" width="130">
+          </el-table-column>
+          <el-table-column prop="operationMaintenanceCost" label="运维费用变化值（万元）" width="130">
+          </el-table-column>
+          <el-table-column prop="sumCost" label="总费用(万元)" width="130">
+          </el-table-column>
+          <el-table-column fixed="right" label="操作" width="120">
+            <template slot-scope="scope">
+              <el-button @click.native.prevent="detail(scope.$index)" type="text" size="small">
+                详情
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </template>
+    </el-drawer>
+
+
+
+    <el-dialog title="方案详情" :visible.sync="dialogTableVisible">
+      <el-table :data="gridData">
+        <el-table-column property="index" label="序号" width="80"></el-table-column>
+        <el-table-column property="road" label="路段" width="100"></el-table-column>
+        <el-table-column property="length" label="长度"></el-table-column>
+        <el-table-column property="price" label="造价"></el-table-column>
+        <el-table-column property="roadType" label="铺设方式"></el-table-column>
+        <el-table-column property="lineType" label="线路类型"></el-table-column>
+      </el-table>
+    </el-dialog>
+
+  </div>
+
+
+</body>
+<!-- <script src="http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b"></script> -->
+
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script type="module">
+
+  var Main = {
+    data() {
+      return {
+        value2: true,
+        dialogTableVisible: false,
+        size: "48%",
+        activeName: 'first',
+        activeName1: '1',
+        activeName2: 'first',
+        activeNames: ['1', '2', '3'],
+        drawer1: false,
+        drawer2: false,
+        tableData1: [{
+          startEnd: 'AB',
+          length: '100',
+          type: '顶管',
+          price: '200'
+        }, {
+          startEnd: 'BC',
+          length: '200',
+          type: '排管',
+          price: '400'
+        }, {
+          startEnd: 'CD',
+          length: '500',
+          type: '沟道',
+          price: '300'
+        }],
+        tableData2: [{
+          item: '开关柜',
+          num: '1',
+          price: '6'
+        }, {
+          item: '户外环网柜',
+          num: '1',
+          price: '10'
+        }],
+        tableData3: [{
+          diffItem: '现状指标',
+          sumInvestment: '',
+          lineDebtRatio: '68',
+          openCapacity: '0.8',
+          terminalVoltage: '9.56',
+          lineLoss: '5.98',
+          nodeAvailability: '-',
+          nodeAverageOutageTime: '-',
+          lineAvailability: '99.99',
+          lineAverageOutageTime: '52',
+          powerFailureLoss: '',
+          runtimeLoss: '',
+          operationMaintenanceCost: '',
+          sumCost: '-'
+        }, {
+          diffItem: '方案一',
+          sumInvestment: '1300',
+          lineDebtRatio: '52',
+          openCapacity: '1.3',
+          terminalVoltage: '9.79',
+          lineLoss: '3.63',
+          nodeAvailability: '99.99',
+          nodeAverageOutageTime: '52',
+          lineAvailability: '99.85',
+          lineAverageOutageTime: '79',
+          powerFailureLoss: '100',
+          runtimeLoss: '40',
+          operationMaintenanceCost: '30',
+          sumCost: '1470'
+        }, {
+          diffItem: '方案二',
+          sumInvestment: '1200',
+          lineDebtRatio: '44',
+          openCapacity: '2.3',
+          terminalVoltage: '9.31',
+          lineLoss: '4.31',
+          nodeAvailability: '99.99',
+          nodeAverageOutageTime: '5',
+          lineAvailability: '99.98',
+          lineAverageOutageTime: '105',
+          powerFailureLoss: '90',
+          runtimeLoss: '30',
+          operationMaintenanceCost: '30',
+          sumCost: '1350'
+        }, {
+          diffItem: '方案三',
+          sumInvestment: '1250',
+          lineDebtRatio: '30',
+          openCapacity: '3.1',
+          terminalVoltage: '9.25',
+          lineLoss: '5.62',
+          nodeAvailability: '99.99',
+          nodeAverageOutageTime: '52',
+          lineAvailability: '99.97',
+          lineAverageOutageTime: '158',
+          powerFailureLoss: '120',
+          runtimeLoss: '100',
+          operationMaintenanceCost: '100',
+          sumCost: '1570'
+        }],
+        gridData: [{
+          index: '1',
+          road: '深圳市福田区福华三路',
+          length: '0.5',
+          price: 80,
+          roadType: '电力管沟',
+          lineType: '-'
+        }, {
+          index: '2',
+          road: '深圳市福田区福华三路',
+          length: '1.2',
+          price: 200,
+          roadType: '市政道路、电力管沟',
+          lineType: '-'
+        }, {
+          index: '3',
+          road: '深圳市福田区福华三路',
+          length: '0.3',
+          price: 50,
+          roadType: '电力管沟',
+          lineType: '-'
+        }, {
+          index: '4',
+          road: '深圳市福田区福华三路',
+          length: '0.5',
+          price: 120,
+          roadType: '市政道路',
+          lineType: '-'
+        }],
+        form: {
+          name: ''
+        }
+      };
+    },
+    mounted() {
+      this.initMap()
+    },
+    methods: {
+      initMap() {
+        loadBMap()
+      }, openCompare() {
+        this.drawer1 = false;
+        this.drawer2 = true;
+        this.dialogTableVisible = false;
+        $("#compare").hide();
+        $("#choice").show();
+      }, openChoice() {
+        this.drawer1 = true;
+        this.drawer2 = false;
+        this.dialogTableVisible = false;
+        $("#compare").show();
+        $("#choice").hide();
+      },
+      compareClose(done) {
+        $("#compare").show();
+        done();
+      },
+      choiceClose(done) {
+        $("#choice").show();
+        done();
+      }, detail(index) {
+        this.dialogTableVisible = true;
+      }
+    }
+  };
+  var Ctor = Vue.extend(Main)
+  new Ctor().$mount('#app')
+
+  /**
+   * @description 加载百度地图相关资源js
+   * @param {string} ak
+   */
+  export default function loadBMap(ak) {
+    return new Promise((resolve, reject) => {
+      asyncLoadBaiduJs(ak)
+        .catch(err => {
+          reject(err)
+        })
+    })
+  }
+
+
+
+  /**
+   * @description 加载百度地图基础组件js
+   * @param {string} ak
+   */
+  export function asyncLoadBaiduJs() {
+    return new Promise((resolve, reject) => {
+      if (typeof BMap !== 'undefined') {
+        resolve(BMap)
+        return true
+      }
+      window.onBMapCallback = function () {
+        var map = new BMapGL.Map('bdmap'); // 创建Map实例
+        var point = new BMapGL.Point(116.404, 39.915); // 创建点坐标
+        map.centerAndZoom(point, 10);
+        map.enableScrollWheelZoom(); // 启用滚轮放大缩小
+
+        //定义一个控件类
+        function ZoomControl() {
+          this.defaultAnchor = BMAP_ANCHOR_BOTTOM_RIGHT;
+          this.defaultOffset = new BMapGL.Size(20, 20)
+        }
+        //通过JavaScript的prototype属性继承于BMap.Control
+        ZoomControl.prototype = new BMapGL.Control();
+
+        //自定义控件必须实现自己的initialize方法，并且将控件的DOM元素返回
+        //在本方法中创建个div元素作为控件的容器，并将其添加到地图容器中
+        ZoomControl.prototype.initialize = function (map) {
+          //创建一个dom元素
+          var div = document.createElement('div');
+
+          div.innerHTML = $("#compare").html();
+
+          // 添加DOM元素到地图中
+          map.getContainer().appendChild(div);
+          // 将DOM元素返回
+          return div;
+        }
+        //创建控件元素
+        var myZoomCtrl = new ZoomControl();
+        //添加到地图中
+        // map.addControl(myZoomCtrl);
+      }
+      let script = document.createElement('script')
+      script.type = 'text/javascript'
+      script.src = 'http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b&callback=onBMapCallback'
+      script.onerror = reject
+      document.head.appendChild(script)
+    })
+  }
+
+</script>
+
+</html>
