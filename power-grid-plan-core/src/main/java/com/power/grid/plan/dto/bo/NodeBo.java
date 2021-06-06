@@ -13,29 +13,29 @@ public class NodeBo {
     /**
      * 节点id
      */
-    private long id;
+    private Long id;
 
     /**
      * 经度
      */
-    private double longitude;
+    private Double longitude;
 
     /**
      * 纬度
      */
-    private double latitude;
+    private Double latitude;
 
 
     public NodeBo() {
     }
 
-    public NodeBo(long id, double longitude, double latitude) {
+    public NodeBo(Long id, Double longitude, Double latitude) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public NodeBo(double longitude, double latitude) {
+    public NodeBo(Double longitude, Double latitude) {
         this.longitude = longitude;
         this.latitude = latitude;
     }

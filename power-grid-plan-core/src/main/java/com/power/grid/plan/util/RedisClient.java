@@ -10,15 +10,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 作者（@author wangchun8 部门： 技术发展部-中台研发部-交易平台组 ）
- * 版本（@version 1.0）
- * 创建、开发日期（@date 2020/6/29 10:15）
- **/
+
 @Component
 public class RedisClient {
 
-    public static final String PREFIX = "biz";
+    public static final String PREFIX = "power";
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 

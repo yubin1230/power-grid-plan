@@ -20,7 +20,10 @@
         <el-input v-model="formInline.end" placeholder="请输入终点"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">计算</el-button>
+        <el-button type="primary" @click="onSubmit">蚂蚁算法</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="onSubmitAStart">A星算法</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -148,7 +151,6 @@
         this.getTableData();
       },
       onSubmit:function(){
-        console.log('submit!');
         var self = this;
         $.ajax({
           type : "get",
@@ -156,6 +158,22 @@
           contentType : "application/json",
           data: {start:self.formInline.start,end:self.formInline.end},
           url : "/calculate",
+          success : function(data) {
+            self.tableData1=data;
+          },
+          error : function(json) {
+            self.$message.error('加载失败');
+          }
+        });
+      },
+      onSubmitAStart:function(){
+        var self = this;
+        $.ajax({
+          type : "get",
+          dataType : "json",
+          contentType : "application/json",
+          data: {start:self.formInline.start,end:self.formInline.end},
+          url : "/aStarCalculate",
           success : function(data) {
             self.tableData1=data;
           },
