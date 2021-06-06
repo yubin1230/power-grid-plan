@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.power.grid.plan.mapper.RequirementParamMapper" >
+  <resultMap id="BaseResultMap" type="com.power.grid.plan.pojo.RequirementParamPo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="need_no" property="needNo" jdbcType="VARCHAR" />
+    <result column="industry_ratio" property="industryRatio" jdbcType="INTEGER" />
+    <result column="business_ratio" property="businessRatio" jdbcType="INTEGER" />
+    <result column="resident_ratio" property="residentRatio" jdbcType="INTEGER" />
+    <result column="charging_pile_ratio" property="chargingPileRatio" jdbcType="INTEGER" />
+    <result column="blend_ratio" property="blendRatio" jdbcType="INTEGER" />
+    <result column="industry_maximum_capacity" property="industryMaximumCapacity" jdbcType="INTEGER" />
+    <result column="business_maximum_capacity" property="businessMaximumCapacity" jdbcType="INTEGER" />
+    <result column="resident_maximum_capacity" property="residentMaximumCapacity" jdbcType="INTEGER" />
+    <result column="charging_pile_maximum_capacity" property="chargingPileMaximumCapacity" jdbcType="INTEGER" />
+    <result column="a1_automation_ratio" property="a1AutomationRatio" jdbcType="INTEGER" />
+    <result column="a2_automation_ratio" property="a2AutomationRatio" jdbcType="INTEGER" />
+    <result column="b_automation_ratio" property="bAutomationRatio" jdbcType="INTEGER" />
+    <result column="line_threshold" property="lineThreshold" jdbcType="INTEGER" />
+    <result column="line_threshold_ratio" property="lineThresholdRatio" jdbcType="DOUBLE" />
+    <result column="a1_industry_load" property="a1IndustryLoad" jdbcType="DOUBLE" />
+    <result column="a1_industry_load_ratio" property="a1IndustryLoadRatio" jdbcType="DOUBLE" />
+    <result column="a1_industry_capacity" property="a1IndustryCapacity" jdbcType="INTEGER" />
+    <result column="a1_industry_capacity_ratio" property="a1IndustryCapacityRatio" jdbcType="DOUBLE" />
+    <result column="a1_industry_users" property="a1IndustryUsers" jdbcType="INTEGER" />
+    <result column="a1_business_load" property="a1BusinessLoad" jdbcType="DOUBLE" />
+    <result column="a1_business_load_ratio" property="a1BusinessLoadRatio" jdbcType="DOUBLE" />
+    <result column="a1_business_capacity" property="a1BusinessCapacity" jdbcType="INTEGER" />
+    <result column="a1_business_capacity_ratio" property="a1BusinessCapacityRatio" jdbcType="DOUBLE" />
+    <result column="a1_business_users" property="a1BusinessUsers" jdbcType="INTEGER" />
+    <result column="a1_resident_load" property="a1ResidentLoad" jdbcType="DOUBLE" />
+    <result column="a1_resident_load_ratio" property="a1ResidentLoadRatio" jdbcType="DOUBLE" />
+    <result column="a1_resident_capacity" property="a1ResidentCapacity" jdbcType="INTEGER" />
+    <result column="a1_resident_capacity_ratio" property="a1ResidentCapacityRatio" jdbcType="DOUBLE" />
+    <result column="a1_resident_users" property="a1ResidentUsers" jdbcType="INTEGER" />
+    <result column="a2b_industry_load" property="a2bIndustryLoad" jdbcType="DOUBLE" />
+    <result column="a2b_industry_load_ratio" property="a2bIndustryLoadRatio" jdbcType="DOUBLE" />
+    <result column="a2b_industry_capacity" property="a2bIndustryCapacity" jdbcType="INTEGER" />
+    <result column="a2b_industry_capacity_ratio" property="a2bIndustryCapacityRatio" jdbcType="DOUBLE" />
+    <result column="a2b_industry_users" property="a2bIndustryUsers" jdbcType="INTEGER" />
+    <result column="a2b_business_load" property="a2bBusinessLoad" jdbcType="DOUBLE" />
+    <result column="a2b_business_load_ratio" property="a2bBusinessLoadRatio" jdbcType="DOUBLE" />
+    <result column="a2b_business_capacity" property="a2bBusinessCapacity" jdbcType="INTEGER" />
+    <result column="a2b_business_capacity_ratio" property="a2bBusinessCapacityRatio" jdbcType="DOUBLE" />
+    <result column="a2b_business_users" property="a2bBusinessUsers" jdbcType="INTEGER" />
+    <result column="a2b_resident_load" property="a2bResidentLoad" jdbcType="DOUBLE" />
+    <result column="a2b_resident_load_ratio" property="a2bResidentLoadRatio" jdbcType="DOUBLE" />
+    <result column="a2b_resident_capacity" property="a2bResidentCapacity" jdbcType="INTEGER" />
+    <result column="a2b_resident_capacity_ratio" property="a2bResidentCapacityRatio" jdbcType="DOUBLE" />
+    <result column="a2b_resident_users" property="a2bResidentUsers" jdbcType="INTEGER" />
+    <result column="a1_node_num" property="a1NodeNum" jdbcType="INTEGER" />
+    <result column="a2_node_num" property="a2NodeNum" jdbcType="INTEGER" />
+    <result column="b_node_num" property="bNodeNum" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="is_deleted" property="isDeleted" jdbcType="INTEGER" />
+    <result column="ts" property="ts" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, need_no, industry_ratio, business_ratio, resident_ratio, charging_pile_ratio, 
+    blend_ratio, industry_maximum_capacity, business_maximum_capacity, resident_maximum_capacity, 
+    charging_pile_maximum_capacity, a1_automation_ratio, a2_automation_ratio, b_automation_ratio, 
+    line_threshold, line_threshold_ratio, a1_industry_load, a1_industry_load_ratio, a1_industry_capacity, 
+    a1_industry_capacity_ratio, a1_industry_users, a1_business_load, a1_business_load_ratio, 
+    a1_business_capacity, a1_business_capacity_ratio, a1_business_users, a1_resident_load, 
+    a1_resident_load_ratio, a1_resident_capacity, a1_resident_capacity_ratio, a1_resident_users, 
+    a2b_industry_load, a2b_industry_load_ratio, a2b_industry_capacity, a2b_industry_capacity_ratio, 
+    a2b_industry_users, a2b_business_load, a2b_business_load_ratio, a2b_business_capacity, 
+    a2b_business_capacity_ratio, a2b_business_users, a2b_resident_load, a2b_resident_load_ratio, 
+    a2b_resident_capacity, a2b_resident_capacity_ratio, a2b_resident_users, a1_node_num, 
+    a2_node_num, b_node_num, create_time, create_user, update_time, update_user, is_deleted, 
+    ts
+  </sql>
+
+  <select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List"/>
+    from yk_xq_param
+    where is_deleted=1 and need_no = #{needNo,jdbcType=VARCHAR}
+  </select>
+
+
+  <insert id="insert" parameterType="com.power.grid.plan.pojo.RequirementParamPo" >
+    insert into yk_xq_param (need_no, industry_ratio,
+      business_ratio, resident_ratio, charging_pile_ratio,
+      blend_ratio, industry_maximum_capacity, business_maximum_capacity,
+      resident_maximum_capacity, charging_pile_maximum_capacity,
+      a1_automation_ratio, a2_automation_ratio, b_automation_ratio,
+      line_threshold, line_threshold_ratio, a1_industry_load,
+      a1_industry_load_ratio, a1_industry_capacity,
+      a1_industry_capacity_ratio, a1_industry_users,
+      a1_business_load, a1_business_load_ratio, a1_business_capacity,
+      a1_business_capacity_ratio, a1_business_users,
+      a1_resident_load, a1_resident_load_ratio, a1_resident_capacity,
+      a1_resident_capacity_ratio, a1_resident_users,
+      a2b_industry_load, a2b_industry_load_ratio, a2b_industry_capacity,
+      a2b_industry_capacity_ratio, a2b_industry_users,
+      a2b_business_load, a2b_business_load_ratio, a2b_business_capacity,
+      a2b_business_capacity_ratio, a2b_business_users,
+      a2b_resident_load, a2b_resident_load_ratio, a2b_resident_capacity,
+      a2b_resident_capacity_ratio, a2b_resident_users,
+      a1_node_num, a2_node_num, b_node_num,
+      create_time, create_user
+      )
+    values ( #{needNo,jdbcType=VARCHAR}, #{industryRatio,jdbcType=INTEGER},
+      #{businessRatio,jdbcType=INTEGER}, #{residentRatio,jdbcType=INTEGER}, #{chargingPileRatio,jdbcType=INTEGER},
+      #{blendRatio,jdbcType=INTEGER}, #{industryMaximumCapacity,jdbcType=INTEGER}, #{businessMaximumCapacity,jdbcType=INTEGER},
+      #{residentMaximumCapacity,jdbcType=INTEGER}, #{chargingPileMaximumCapacity,jdbcType=INTEGER},
+      #{a1AutomationRatio,jdbcType=INTEGER}, #{a2AutomationRatio,jdbcType=INTEGER}, #{bAutomationRatio,jdbcType=INTEGER},
+      #{lineThreshold,jdbcType=INTEGER}, #{lineThresholdRatio,jdbcType=DOUBLE}, #{a1IndustryLoad,jdbcType=DOUBLE},
+      #{a1IndustryLoadRatio,jdbcType=DOUBLE}, #{a1IndustryCapacity,jdbcType=INTEGER},
+      #{a1IndustryCapacityRatio,jdbcType=DOUBLE}, #{a1IndustryUsers,jdbcType=INTEGER},
+      #{a1BusinessLoad,jdbcType=DOUBLE}, #{a1BusinessLoadRatio,jdbcType=DOUBLE}, #{a1BusinessCapacity,jdbcType=INTEGER},
+      #{a1BusinessCapacityRatio,jdbcType=DOUBLE}, #{a1BusinessUsers,jdbcType=INTEGER},
+      #{a1ResidentLoad,jdbcType=DOUBLE}, #{a1ResidentLoadRatio,jdbcType=DOUBLE}, #{a1ResidentCapacity,jdbcType=INTEGER},
+      #{a1ResidentCapacityRatio,jdbcType=DOUBLE}, #{a1ResidentUsers,jdbcType=INTEGER},
+      #{a2bIndustryLoad,jdbcType=DOUBLE}, #{a2bIndustryLoadRatio,jdbcType=DOUBLE}, #{a2bIndustryCapacity,jdbcType=INTEGER},
+      #{a2bIndustryCapacityRatio,jdbcType=DOUBLE}, #{a2bIndustryUsers,jdbcType=INTEGER},
+      #{a2bBusinessLoad,jdbcType=DOUBLE}, #{a2bBusinessLoadRatio,jdbcType=DOUBLE}, #{a2bBusinessCapacity,jdbcType=INTEGER},
+      #{a2bBusinessCapacityRatio,jdbcType=DOUBLE}, #{a2bBusinessUsers,jdbcType=INTEGER},
+      #{a2bResidentLoad,jdbcType=DOUBLE}, #{a2bResidentLoadRatio,jdbcType=DOUBLE}, #{a2bResidentCapacity,jdbcType=INTEGER},
+      #{a2bResidentCapacityRatio,jdbcType=DOUBLE}, #{a2bResidentUsers,jdbcType=INTEGER},
+      #{a1NodeNum,jdbcType=INTEGER}, #{a2NodeNum,jdbcType=INTEGER}, #{bNodeNum,jdbcType=INTEGER},
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}
+      )
+  </insert>
+
+</mapper>

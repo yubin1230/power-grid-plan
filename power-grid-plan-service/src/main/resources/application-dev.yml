@@ -3,9 +3,11 @@ server:
   servlet:
     context-path: /
 debug: true
+
+
 spring:
   mvc:
-    static-path-pattern: /**
+    static-path-pattern: /static/**
   devtools:
     add-properties: true
   datasource:

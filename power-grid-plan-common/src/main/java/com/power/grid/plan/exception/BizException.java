@@ -1,6 +1,6 @@
 package com.power.grid.plan.exception;
 
-import com.power.grid.plan.enums.PowerExceptionEnum;
+import com.power.grid.plan.ResponseCodeEnum;
 
 /**
  * 异常类
@@ -12,18 +12,10 @@ public class BizException extends RuntimeException {
     private String msg;
 
 
-    public BizException(PowerExceptionEnum stockExceptionEnum, String param) {
-        super(String.format(stockExceptionEnum.getMsg(), param));
-        this.code = stockExceptionEnum.getCode();
-        this.msg = String.format(stockExceptionEnum.getMsg(), param);
-    }
-
-
-
-    public static void checkArgument(boolean expression, PowerExceptionEnum stockExceptionEnum, String param) {
-        if (expression) {
-            throw new BizException(stockExceptionEnum, param);
-        }
+    public BizException(ResponseCodeEnum responseCodeEnum, String param) {
+        super(String.format(responseCodeEnum.getMessage(), param));
+        this.code = responseCodeEnum.getCode();
+        this.msg = String.format("%s:%s",responseCodeEnum.getMessage(), param);
     }
 
     public String getMsg() {

@@ -54,7 +54,7 @@ public class FillRequirementController {
             }
             FillRequirementBo bo = new FillRequirementBo();
             BeanUtils.copyProperties(vo, bo);
-            bo.setNeedNo(createNeedo());
+            bo.setNeedNo(createNeedNo());
             fillRequirementService.insert(bo);
             LOG.info("requestNo：{} 新增用户需求成功", vo.getRequestNo());
             return BaseResponse.success(vo.getRequestNo());
@@ -67,7 +67,7 @@ public class FillRequirementController {
     /**
      * 生成序列号
      */
-    private String createNeedo() {
+    private String createNeedNo() {
         String strDateFormat1 = "yyyyMMddHHmmss";
         SimpleDateFormat sdf1 = new SimpleDateFormat(strDateFormat1);
         return String.format("%s%s%s", "SZFT", sdf1.format(new Date()), String.valueOf((int) ((Math.random() * 9 + 1) * 100)));

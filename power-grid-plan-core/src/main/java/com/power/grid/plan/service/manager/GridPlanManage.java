@@ -10,10 +10,10 @@ import com.power.grid.plan.dto.bo.RoadBo;
 import com.power.grid.plan.dto.bo.RoadHandleBo;
 import com.power.grid.plan.service.CalculateService;
 import com.power.grid.plan.service.coordinate.CoordinateCenter;
-import com.power.grid.plan.service.coordinate.CoordinateDistance;
 import com.power.grid.plan.service.thread.AntCalculateTask;
 import com.power.grid.plan.util.BaseDataInit;
 import com.power.grid.plan.service.coordinate.LuceneSpatial;
+import com.power.grid.plan.util.MapUtil;
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -104,7 +104,7 @@ public class GridPlanManage {
         //中心点坐标
         NodeBo nodeBo = CoordinateCenter.GetCenterPoint(nodeStartEnd);
 
-        double radius = CoordinateDistance.GetDistance(nodeBoMap.get(String.valueOf(start)), nodeBoMap.get(String.valueOf(end))) / (2 * 1000) + Constants.RADIUS_ADD;
+        double radius = MapUtil.getDistance(nodeBoMap.get(String.valueOf(start)), nodeBoMap.get(String.valueOf(end))) / (2 * 1000) + Constants.RADIUS_ADD;
 
         //查询end节点，
         List<NodeBo> searchList = luceneSpatial.search(nodeBo, radius, nodeBoList.size());

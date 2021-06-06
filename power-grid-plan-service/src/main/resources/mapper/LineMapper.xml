@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.power.grid.plan.mapper.LineMapper">
+    <resultMap id="BaseResultMap" type="com.power.grid.plan.pojo.LinePo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="line_no" property="lineNo" jdbcType="VARCHAR"/>
+        <result column="line_type" property="lineType" jdbcType="INTEGER"/>
+        <result column="line_points" property="linePoints" jdbcType="VARCHAR"/>
+        <result column="line_power" property="linePower" jdbcType="INTEGER"/>
+        <result column="line_power_used" property="linePowerUsed" jdbcType="INTEGER"/>
+        <result column="plan_line_power_used" property="planLinePowerUsed" jdbcType="INTEGER"/>
+        <result column="station_name" property="stationName" jdbcType="VARCHAR"/>
+        <result column="overload" property="overload" jdbcType="INTEGER"/>
+        <result column="bus_no" property="busNo" jdbcType="VARCHAR"/>
+        <result column="fl_name" property="flName" jdbcType="VARCHAR"/>
+        <result column="overall_desirability" property="overallDesirability" jdbcType="INTEGER"/>
+        <result column="grid_no" property="gridNo" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="ts" property="ts" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, line_no, line_type, line_points, line_power, line_power_used, plan_line_power_used, 
+    station_name, overload, bus_no, fl_name, overall_desirability, grid_no, create_time, 
+    create_user, update_time, update_user, is_deleted, ts
+  </sql>
+    <select id="selectListByCondition" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from yk_gh_line
+        where is_deleted=1
+        <if test="gridNo != null">
+            and grid_no = #{gridNo,jdbcType=VARCHAR}
+        </if>
+    </select>
+</mapper>

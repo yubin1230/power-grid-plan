@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.power.grid.plan.mapper.CabinetMapper">
+    <resultMap id="BaseResultMap" type="com.power.grid.plan.pojo.CabinetPo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="cabinet_no" property="cabinetNo" jdbcType="VARCHAR"/>
+        <result column="longitude" property="longitude" jdbcType="DOUBLE"/>
+        <result column="latitude" property="latitude" jdbcType="DOUBLE"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="cl_value" property="clValue" jdbcType="INTEGER"/>
+        <result column="capacity" property="capacity" jdbcType="INTEGER"/>
+        <result column="use_capacity" property="useCapacity" jdbcType="INTEGER"/>
+        <result column="output_no" property="outputNo" jdbcType="VARCHAR"/>
+        <result column="output_used_no" property="outputUsedNo" jdbcType="VARCHAR"/>
+        <result column="grid_no" property="gridNo" jdbcType="VARCHAR"/>
+        <result column="line_no" property="lineNo" jdbcType="VARCHAR"/>
+        <result column="automation" property="automation" jdbcType="INTEGER"/>
+        <result column="control_type" property="controlType" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="ts" property="ts" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, cabinet_no, longitude, latitude, type, cl_value, capacity, use_capacity, output_no, 
+    output_used_no, grid_no, line_no, automation, control_type, create_time, create_user, 
+    update_time, update_user, is_deleted, ts
+  </sql>
+    <select id="selectListByCondition" resultMap="BaseResultMap" parameterType="com.power.grid.plan.pojo.CabinetPo">
+        select
+        <include refid="Base_Column_List"/>
+        from yk_gh_cabinet
+        where is_deleted=1
+        <if test="gridNo != null">
+            and grid_no = #{gridNo,jdbcType=VARCHAR}
+        </if>
+        <if test="lineNo != null">
+            and line_no = #{lineNo,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="selectListByLineNoList" resultMap="BaseResultMap" parameterType="java.util.List">
+        select
+        <include refid="Base_Column_List"/>
+        from yk_gh_cabinet
+        where is_deleted=1
+        line_no in
+        <foreach item="lineNo" collection="lineNoList" separator="," open="(" close=")" index="">
+            #{lineNo, jdbcType=VARCHAR}
+        </foreach>
+    </select>
+
+    <select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from yk_gh_cabinet
+        where cabinet_no = #{cabinetNo,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="com.power.grid.plan.pojo.CabinetPo">
+    insert into yk_gh_cabinet (cabinet_no, longitude,
+      latitude, type, cl_value, 
+      capacity, use_capacity, output_no, 
+      output_used_no, grid_no, line_no, 
+      automation, control_type, create_time, 
+      create_user, update_time, update_user)
+    values ( #{cabinetNo,jdbcType=VARCHAR}, #{longitude,jdbcType=DOUBLE},
+      #{latitude,jdbcType=DOUBLE}, #{type,jdbcType=VARCHAR}, #{clValue,jdbcType=INTEGER}, 
+      #{capacity,jdbcType=INTEGER}, #{useCapacity,jdbcType=INTEGER}, #{outputNo,jdbcType=VARCHAR}, 
+      #{outputUsedNo,jdbcType=VARCHAR}, #{gridNo,jdbcType=VARCHAR}, #{lineNo,jdbcType=VARCHAR}, 
+      #{automation,jdbcType=INTEGER}, #{controlType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR})
+  </insert>
+</mapper>

@@ -1,126 +1,197 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="UTF-8">
-  <!-- import CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-  <style>
- 
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
 
- /* .clearfix:before,
-  .clearfix:after {
-    display: table;
-    content: "";
-  }
-  .clearfix:after {
-    clear: both
-  }
 
-  .box-card {
-    width: 100%;
-    margin-left: 2%;
-  } */
-  </style>
+    </style>
 </head>
+
 <body>
 <div id="app">
 
 
-      <!-- <div style="border: 1px solid #eee;padding-top: 10px;height:50px;">
-        <span>现状分析及GIS定位</span>
-        <div style="float: right; padding: 3px 0">
-          <el-input v-model="position" placeholder="经纬度" :disabled="true" style="width: 160px;"></el-input>
-          <el-button type="primary">参数初始化</el-button>
-          <el-button>上一步</el-button>
-        </div>
-
-      </div> -->
-
-      <template>
+    <template>
         <el-tabs v-model="activeName">
-          <el-tab-pane label="现状分析及GIS定位" name="first">
-            <div style="float: right; padding: 3px 0">
-              <el-input v-model="position" placeholder="经纬度" :disabled="true" style="width: 160px;"></el-input>
-              <el-button type="primary">参数初始化</el-button>
-              <el-button>上一步</el-button>
-            </div>
+            <el-tab-pane label="现状分析及GIS定位" name="first">
+                <div style="float: right; padding: 3px 0">
+                    <el-input v-model="position" placeholder="经纬度" :disabled="true" style="width: 300px;"></el-input>
+                    <el-button type="primary">参数初始化</el-button>
+                    <el-button>上一步</el-button>
+                </div>
 
-          </el-tab-pane>
+            </el-tab-pane>
         </el-tabs>
-      </template>
+    </template>
 
 
-      <div id="bdmap" style="width:1800px;height:820px;overflow: hidden;margin:0;font-family:'微软雅黑';margin-left: 50px;">
-      
-      </div>
+    <div id="bdmap" style="width:1800px;height:820px;overflow: hidden;margin:0;font-family:'微软雅黑';margin-left: 50px;">
+
+    </div>
 
 </div>
 
 
 </body>
-<!-- <script src="http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b"></script> -->
-
 <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
 <!-- import Vue before Element -->
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <!-- import JavaScript -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-<script  type="module">
-var Main = {
-    data() {
-      return {
-        activeName: 'first',
-        position: '122'
-      };
-    },
-    mounted() {
-       this.initMap()
-    },
-    methods: {
-    initMap() {
-      loadBMap()
-    }
-  }
-  };
-var Ctor = Vue.extend(Main)
-new Ctor().$mount('#app')
+<script type="module">
+    var Main = {
+        data() {
+            return {
+                activeName: 'first',
+                position: '116.43354733209172,39.90946227072384'
+            };
+        },
+        mounted() {
+            this.initMap()
+        },
+        methods: {
+            initMap() {
+                loadBMap()
+            }
+        }
+    };
+    var Ctor = Vue.extend(Main)
+    new Ctor().$mount('#app')
 
-/**
- * @description 加载百度地图相关资源js
- * @param {string} ak
- */
- export default function loadBMap (ak) {
-    return new Promise((resolve, reject) => {
-      asyncLoadBaiduJs(ak)
-        .catch(err => {
-          reject(err)
+    /**
+     * @description 加载百度地图相关资源js
+     * @param {string} ak
+     */
+
+    function loadBMap(ak) {
+        return new Promise((resolve, reject) => {
+            asyncLoadBaiduJs(ak)
+                .catch(err => {
+                    reject(err)
+                })
         })
-    })
-  }
+    }
 
-  /**
-   * @description 加载百度地图基础组件js
-   * @param {string} ak
-   */
-   export function asyncLoadBaiduJs () {
-    return new Promise((resolve, reject) => {
-      if (typeof BMap !== 'undefined') {
-        resolve(BMap)
-        return true
-      }
-      window.onBMapCallback = function () {
-          var map = new BMapGL.Map('bdmap'); // 创建Map实例
-        var point = new BMapGL.Point(116.404, 39.915); // 创建点坐标
-        map.centerAndZoom(point, 10);
-        map.enableScrollWheelZoom(); // 启用滚轮放大缩小
-      }
-      let script = document.createElement('script')
-      script.type = 'text/javascript'
-      script.src = 'http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b&callback=onBMapCallback'
-      script.onerror = reject
-      document.head.appendChild(script)
-    })
-  }
+    /**
+     * @description 加载百度地图基础组件js
+     * @param {string} ak
+     */
+    var map;
 
+    function asyncLoadBaiduJs() {
+        return new Promise((resolve, reject) => {
+            if (typeof BMap !== 'undefined') {
+                resolve(BMap)
+                return true
+            }
+            window.onBMapCallback = function () {
+                map = new BMapGL.Map('bdmap'); // 创建Map实例
+                var point = new BMapGL.Point(116.404, 39.915); // 创建点坐标
+                map.centerAndZoom(point, 10);
+                map.enableScrollWheelZoom(); // 启用滚轮放大缩小
+                //加载地图信息
+                queryGridL2();
+            }
+            let script = document.createElement('script')
+            script.type = 'text/javascript'
+            script.src = 'http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b&callback=onBMapCallback'
+            script.onerror = reject
+            document.head.appendChild(script)
+        })
+    }
+
+    function queryGridL2() {
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: {requestNo: new Date().getTime(), needNo: 'SZFT20210520004051212'},
+            url: "/showGis/select",
+            success: function (data) {
+                if (data.code == 200) {
+
+                    //显示L2网格
+                    showGridL2(data.data.gridL2Vo);
+
+                    //显示线路
+                    showLine(data.data.lineVoList);
+
+                    //显示环网柜
+                    showCabinet(data.data.cabinetVoList);
+
+                    //显示用户报装点
+                    showRequest(data.data.fillRequirementVo);
+                } else {
+                    self.$message.error('获取L2网格失败失败：' + data.message);
+                }
+            },
+            error: function (json) {
+                self.$message.error('查询L2网格失败');
+            }
+        });
+    }
+
+
+    function showGridL2(gridL2) {
+        var points = [];
+        var pointStr = gridL2.gridEdge.split(";")
+        for (var i = 0; i < pointStr.length; i++) {
+            var xys = pointStr[i].split(",");
+            var point = new BMapGL.Point(xys[0], xys[1]);
+            points.push(point);
+        }
+        var polygon = new BMapGL.Polygon(points, {
+            strokeColor: 'red',
+            strokeWeight: 2,
+            strokeOpacity: 0.5
+        });
+        map.addOverlay(polygon);
+        map.setViewport(points); //将所有的点放置在最佳视野内
+    }
+
+    function showLine(lines) {
+
+        for (var i = 0; i < lines.length; i++) {
+            var points = [];
+            var pointStr = lines[i].linePoints.split(";");
+
+            for (var j = 0; j < pointStr.length; j++) {
+                var xys = pointStr[j].split(",");
+                var point = new BMapGL.Point(xys[0], xys[1]);
+                points.push(point);
+            }
+            var polyline = new BMapGL.Polyline(points, {
+                strokeColor: 'blue',
+                strokeWeight: 2,
+                strokeOpacity: 0.5
+            });
+            map.addOverlay(polyline);
+        }
+    }
+
+
+    function showCabinet(cabinet) {
+
+        var myIcon = new BMapGL.Icon("../static/source/1.png", new BMapGL.Size(60, 50));
+
+        for (var i = 0; i < cabinet.length; i++) {
+            var point = new BMapGL.Point(cabinet[i].longitude, cabinet[i].latitude);
+            var marker = new BMapGL.Marker(point, {
+                icon: myIcon
+            });
+            marker.setZIndex(99999);
+            map.addOverlay(marker);
+        }
+    }
+
+
+    function showRequest(request) {
+        var marker = new BMapGL.Marker(new BMapGL.Point(request.longitude, request.latitude));
+        map.addOverlay(marker);
+    }
 </script>
+
 </html>
