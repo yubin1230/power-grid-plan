@@ -1,9 +1,8 @@
 package com.power.grid.plan.service;
 
 import com.power.grid.plan.dto.bo.CabinetBo;
-import com.power.grid.plan.dto.bo.ContextBo;
+import com.power.grid.plan.dto.bo.CabinetContextBo;
 import com.power.grid.plan.dto.bo.LineBo;
-import com.power.grid.plan.dto.enums.LineType;
 
 import java.util.List;
 
@@ -17,11 +16,10 @@ public interface LineService {
 
     /**
      * 查询符合条件的线路
-     * @param gridNo    网格编码
-     * @param contextBo 业务上下文
+     * @param cabinetContextBo 业务上下文
      * @return java.util.List<com.power.grid.plan.dto.bo.LineBo>
      */
-    List<LineBo> queryLine(String gridNo, ContextBo contextBo);
+    List<LineBo> queryLine(CabinetContextBo cabinetContextBo);
 
     /**
      * 查询L2网格下的线路
@@ -33,18 +31,16 @@ public interface LineService {
     
     /**
     * 现状接线新建环网柜
-    * @param gridNo 网格编码
-    * @param contextBo  业务上下文
+    * @param cabinetContextBo  业务上下文
     * @return java.util.List<com.power.grid.plan.dto.bo.CabinetBo>
     */
-    List<CabinetBo> newCabinetExistLine(String gridNo, ContextBo contextBo);
+    List<CabinetBo> newCabinetExistLine( CabinetContextBo cabinetContextBo);
 
     /**
     * 变电站新出目标接线新建环网柜
-    * @param gridNo  网格编码
-    * @param contextBo  业务上下文
+    * @param cabinetContextBo  业务上下文
     * @return java.util.List<com.power.grid.plan.dto.bo.CabinetBo>
     */
-    List<CabinetBo> newCabinetPlanLine(String gridNo, ContextBo contextBo);
+    List<CabinetBo> newCabinetPlanLine(CabinetContextBo cabinetContextBo);
 
 }

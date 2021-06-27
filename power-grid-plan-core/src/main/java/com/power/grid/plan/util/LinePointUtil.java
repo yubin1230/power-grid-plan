@@ -25,7 +25,9 @@ public class LinePointUtil {
                 String[] endStr = pointStr[i].split(",");
                 NodeBo start = new NodeBo(Double.parseDouble(startStr[0]), Double.parseDouble(startStr[1]));
                 NodeBo end = new NodeBo(Double.parseDouble(endStr[0]), Double.parseDouble(endStr[1]));
-                pointBoList.add(MapUtil.pointToLine(start, end, nodeBo));
+                PointBo pointBo=MapUtil.pointToLine(start, end, nodeBo);
+                pointBo.setLineBo(lineBo);
+                pointBoList.add(pointBo);
             }
         });
         return pointBoList.stream().sorted(Comparator.comparingDouble(PointBo::getDistance)).collect(Collectors.toList());

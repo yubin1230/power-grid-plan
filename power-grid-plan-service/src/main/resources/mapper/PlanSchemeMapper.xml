@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.power.grid.plan.mapper.PlanSchemeMapper">
+    <resultMap id="BaseResultMap" type="com.power.grid.plan.pojo.PlanSchemePo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="case_no" property="caseNo" jdbcType="VARCHAR"/>
+        <result column="case_name" property="caseName" jdbcType="VARCHAR"/>
+        <result column="cabinet_no" property="cabinetNo" jdbcType="VARCHAR"/>
+        <result column="cabinet_type" property="cabinetType" jdbcType="INTEGER"/>
+        <result column="case_cost" property="caseCost" jdbcType="DOUBLE"/>
+        <result column="case_length" property="caseLength" jdbcType="DOUBLE"/>
+        <result column="need_no" property="needNo" jdbcType="VARCHAR"/>
+        <result column="is_choose" property="isChoose" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_user" property="createUser" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="is_deleted" property="isDeleted" jdbcType="INTEGER"/>
+        <result column="ts" property="ts" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, case_no, case_name, cabinet_no,cabinet_type,case_cost, case_length, need_no, is_choose, create_time,
+    create_user, update_time, update_user, is_deleted, ts
+  </sql>
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from yk_gh_case
+        where need_no = #{needNo,jdbcType=VARCHAR} and is_deleted=1
+    </select>
+    <delete id="delete" parameterType="java.lang.String">
+    update yk_gh_case set is_deleted=2
+    where case_no = #{case_no,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.power.grid.plan.pojo.PlanSchemePo">
+    insert into yk_gh_case (case_no, case_name,cabinet_no,cabinet_type,
+      case_cost, case_length, need_no, 
+      is_choose, create_time, create_user, 
+      update_time)
+    values (#{caseNo,jdbcType=VARCHAR}, #{caseName,jdbcType=VARCHAR}, #{cabinetNo,jdbcType=VARCHAR}, #{cabinetType,jdbcType=VARCHAR},
+      #{caseCost,jdbcType=INTEGER}, #{caseLength,jdbcType=VARCHAR}, #{needNo,jdbcType=VARCHAR}, 
+      #{isChoose,jdbcType=INTEGER}, now(), #{createUser,jdbcType=VARCHAR},
+      now())
+  </insert>
+</mapper>

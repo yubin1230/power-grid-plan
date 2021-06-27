@@ -4,23 +4,25 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.power.grid.plan.Constants;
 import com.power.grid.plan.dto.bo.*;
-import com.power.grid.plan.service.CalculateService;
 import com.power.grid.plan.service.astar.AStar;
 import com.power.grid.plan.service.astar.InitRoadMap;
 import com.power.grid.plan.service.coordinate.CoordinateCenter;
 import com.power.grid.plan.service.coordinate.CoordinateDistance;
 import com.power.grid.plan.service.coordinate.LuceneSpatial;
-import com.power.grid.plan.service.thread.AntCalculateTask;
 import com.power.grid.plan.util.BaseDataInit;
+import com.power.grid.plan.util.MapUtil;
 import com.power.grid.plan.util.RemoveLoopRoad;
+import com.power.grid.plan.util.RoadPointUtil;
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -54,11 +56,11 @@ public class AStarCalculateManage {
 
         List<RoadBo> roadBoList = getRoadBoList(start, end);
         //初始化距离、成本
-        Map<Long, AStarRoadHandleBo> roadHandleBoMap = initRoadMap.initRoadMap(roadBoList);
+        Map<String, AStarRoadHandleBo> roadHandleBoMap = initRoadMap.initRoadMap(roadBoList);
 
         List<NodeBo> nodeBoList = baseDataInit.getNodeBoList();
 
-        Map<Long, NodeBo> nodeBoMap = nodeBoList.stream().collect(Collectors.toMap(NodeBo::getId, node -> node, (key1, key2) -> key1));
+        Map<String, NodeBo> nodeBoMap = nodeBoList.stream().collect(Collectors.toMap(nodeBo -> String.valueOf(nodeBo.getId()), node -> node, (key1, key2) -> key1));
 
         double[] factors = Constants.FACTORS;
         Set<HandleBo> handleBoSet = Sets.newHashSet();
@@ -105,7 +107,7 @@ public class AStarCalculateManage {
         return roadBoList.parallelStream().filter(roadBo -> matchNodeIdList.contains(roadBo.getStartNodeId()) || matchNodeIdList.contains(roadBo.getEndNodeId())).collect(Collectors.toList());
     }
 
-    private Double getSumPrice(Map<Long, AStarRoadHandleBo> roadHandleBoMap, List<Long> pathList) {
+    private Double getSumPrice(Map<String, AStarRoadHandleBo> roadHandleBoMap, List<Long> pathList) {
         double price = 0.0;
         for (int i = 0; i < pathList.size() - 1; i++) {
             AStarRoadHandleBo roadHandleBo = roadHandleBoMap.get(pathList.get(i));

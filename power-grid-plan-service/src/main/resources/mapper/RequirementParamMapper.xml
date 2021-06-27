@@ -74,7 +74,7 @@
     ts
   </sql>
 
-  <select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  <select id="selectOne" resultMap="BaseResultMap" parameterType="java.lang.String">
     select
     <include refid="Base_Column_List"/>
     from yk_xq_param

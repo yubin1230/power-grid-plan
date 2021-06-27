@@ -1,7 +1,10 @@
 package com.power.grid.plan.dto.bo;
 
+import com.power.grid.plan.dto.enums.CabinetCategoryType;
 import lombok.Builder;
 import lombok.Data;
+
+import static com.power.grid.plan.dto.enums.CabinetCategoryType.*;
 
 
 @Data
@@ -35,4 +38,8 @@ public class CabinetBo {
     private Integer automation;
 
     private String controlType;
+
+    private CabinetCategoryType cabinetCategory;
+
+    private String stationName;
 }

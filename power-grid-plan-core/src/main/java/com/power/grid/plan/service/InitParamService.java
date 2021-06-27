@@ -10,4 +10,6 @@ import com.power.grid.plan.dto.bo.RequirementParamBo;
 public interface InitParamService {
 
     void initRequirementParam(RequirementParamBo bo);
+
+    RequirementParamBo selectOne(String needNo);
 }

@@ -2,40 +2,124 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <!-- import CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-  <style>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
 
 
-  </style>
+    </style>
 </head>
 
 <body>
-  <div id="app">
+<div id="app">
 
     <template>
-      <el-tabs v-model="activeName">
-        <el-tab-pane label="人工介入" name="first">
-          <div style="float: right; padding: 3px 0">
-            <el-button type="primary">下一步</el-button>
-            <el-button>上一步</el-button>
-          </div>
+        <el-tabs v-model="activeName">
+            <el-tab-pane label="人工介入" name="first">
+                <div style="float: right; padding: 3px 0">
+                    <el-button type="primary" @click="calculate">下一步</el-button>
+                    <el-button>上一步</el-button>
+                </div>
 
-        </el-tab-pane>
-      </el-tabs>
+            </el-tab-pane>
+        </el-tabs>
     </template>
 
 
-    <div id="bdmap" style="width:1800px;height:820px;overflow: hidden;margin:0;font-family:'微软雅黑';margin-left: 50px;">
+    <div id="bdmap"
+         style="width:1800px;height:820px;overflow: hidden;margin:0;font-family:'微软雅黑';margin-left: 50px;z-index: -99">
 
     </div>
 
-  </div>
+    <div id="new1" style="margin-left: 1650px;margin-top: -540px;z-index: 1;position: absolute;">
+        <el-button @click="newCabinet1()" type="primary">
+            新建环网柜—现有线路<i class="el-icon-arrow-left" style="margin-left: 8px;"></i>
+        </el-button>
+    </div>
+
+    <div id="new2" style="margin-left: 1650px;;margin-top: -460px;z-index: 1;position: absolute;">
+        <el-button @click="newCabinet2()" type="primary">
+            新建环网柜—规划线路<i class="el-icon-arrow-left" style="margin-left: 8px;"></i>
+        </el-button>
+    </div>
+
+    <div id="del" style="margin-left: 1687px;;margin-top: -380px;z-index: 1;position: absolute;">
+        <el-button @click="delCabinet()" type="info">
+            删除规划环网柜<i class="el-icon-delete" style="margin-left: 8px;"></i>
+        </el-button>
+    </div>
+
+    <el-dialog title="线路规划方案" :visible.sync="show1" width="1300px" height="450px" :append-to-body="true"
+               style="height: 700px; overflow: hidden;" :close-on-click-modal="false" :close-on-press-escape="false">
+        <template>
+            <el-tabs v-model="activeName1">
+                <el-tab-pane label="线路规划方案" name="first">
+
+                    <div style="float: right; padding: 3px 0">
+                        <el-button type="primary" @click="electricalCheck">电气校验</el-button>
+                        <el-button @click="show1 = false">取消</el-button>
+                    </div>
+                    <el-table :data="tableData1" stripe border style="width: 100%">
+                        <el-table-column prop="caseName" label="" width="200" align="center">
+                        </el-table-column>
+                        <el-table-column prop="area" label="供电区域" width="200" align="center">
+                        </el-table-column>
+                        <el-table-column prop="sumPrice" label="投资估算（万元）" width="200" align="center">
+                        </el-table-column>
+                        <el-table-column prop="sumDistance" label="总长度（km）" width="200" align="center">
+                        </el-table-column>
+                        <el-table-column prop="gridNo" label="网格编号" align="center">
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+            </el-tabs>
+        </template>
+
+    </el-dialog>
+
+    <el-dialog title="电气校验" :visible.sync="show2" width="1300px" height="450px" :append-to-body="true"
+               style="height: 700px; overflow: hidden;" :close-on-click-modal="false" :close-on-press-escape="false">
+        <template>
+            <el-tabs v-model="activeName2">
+                <el-tab-pane label="线路规划方案校验" name="first">
+
+                    <div style="float: right; padding: 3px 0">
+                        <el-button type="primary" @click="schemeConfirm">下一步</el-button>
+                        <el-button @click="show2 = false">取消</el-button>
+                    </div>
+
+
+                    <el-table :data="tableData2" stripe border style="width: 100%">
+                        <el-table-column prop="caseName" label="" width="180" align="center">
+                        </el-table-column>
+                        <el-table-column prop="area" label="供电区域" width="180" align="center">
+                        </el-table-column>
+                        <el-table-column prop="sumPrice" label="投资估算（万元）" width="180" align="center">
+                        </el-table-column>
+                        <el-table-column prop="sumDistance" label="总长度（km）" width="180" align="center">
+                        </el-table-column>
+                        <el-table-column prop="gridNo" label="网格编号" width="180" align="center">
+                        </el-table-column>
+                        <el-table-column prop="result" label="校验结果" align="center">
+                            <template slot-scope="scope">
+                                <i :class="scope.row.result === true ? 'el-icon-check' : 'el-icon-close'"></i>
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+
+
+                </el-tab-pane>
+            </el-tabs>
+        </template>
+
+    </el-dialog>
+
+</div>
 
 
 </body>
-<!-- <script src="http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b"></script> -->
 
 <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
 <!-- import Vue before Element -->
@@ -43,146 +127,343 @@
 <!-- import JavaScript -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <script type="module">
-  var Main = {
-    data() {
-      return {
-        activeName: 'first'
-      };
-    },
-    mounted() {
-      this.initMap();
-    },
-    methods: {
-      initMap() {
-        loadBMap();
-      }
+    var Main = {
+        data() {
+            return {
+                activeName: 'first',
+                activeName1: 'first',
+                activeName2: 'first',
+                show1: false,
+                show2: false,
+                tableData1: [],
+                tableData2: []
+            };
+        },
+        mounted() {
+            this.initMap();
+        },
+        methods: {
+            initMap() {
+                loadBMap();
+            },
+            newCabinet1() {
+                newCabinet1(this);
+            },
+            newCabinet2() {
+                newCabinet2(this);
+            },
+            delCabinet() {
+                delCabinet(this)
+            },
+            calculate() {
+                const loading = this.$loading({
+                    lock: true,
+                    text: '正在计算中',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                calculate(loading, this);
+            }, electricalCheck() {
+                this.tableData2 = this.tableData1;
+                this.show1 = false;
+                this.show2 = true;
+            }, schemeConfirm() {
+                schemeConfirm(this);
+            }
+        }
+    };
+    var Ctor = Vue.extend(Main)
+    new Ctor().$mount('#app')
+
+    /**
+     * @description 加载百度地图相关资源js
+     * @param {string} ak
+     */
+    function loadBMap(ak) {
+        return new Promise((resolve, reject) => {
+            asyncLoadBaiduJs(ak)
+                .catch(err => {
+                    reject(err)
+                });
+        })
     }
-  };
-  var Ctor = Vue.extend(Main)
-  new Ctor().$mount('#app')
 
-  /**
-   * @description 加载百度地图相关资源js
-   * @param {string} ak
-   */
-  export default function loadBMap(ak) {
-    return new Promise((resolve, reject) => {
-      asyncLoadBaiduJs(ak)
-        .catch(err => {
-          reject(err)
+    /**
+     * @description 加载百度地图基础组件js
+     * @param {string} ak
+     */
+    var map;
+
+    export function asyncLoadBaiduJs() {
+        return new Promise((resolve, reject) => {
+            if (typeof BMap !== 'undefined') {
+                resolve(BMap)
+                return true
+            }
+            window.onBMapCallback = function () {
+                map = new BMapGL.Map('bdmap'); // 创建Map实例
+                map.centerAndZoom("深圳福田区", 15);
+                map.enableScrollWheelZoom(); // 启用滚轮放大缩小
+                //查询用户报装信息
+                queryRequirement();
+
+                //查询已有环网柜
+                queryExistCabinet();
+
+            }
+            let script = document.createElement('script')
+            script.type = 'text/javascript'
+            script.src = 'http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b&callback=onBMapCallback'
+            script.onerror = reject
+            document.head.appendChild(script)
+        })
+    }
+
+    var markers = [];
+    var cabinets = [];
+    var fillRequirementVo;
+
+    function queryRequirement(self) {
+
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: {requestNo: new Date().getTime(), needNo: 'SZFT20210622010250792'},
+            url: "/fillRequirement/selectFillRequirement",
+            success: function (data) {
+                if (data.code == 200) {
+                    fillRequirementVo = data.data;
+                    //显示用户报装点
+                    showRequest(data.data);
+                } else {
+                    self.$message.error('获取L2网格失败失败：' + data.message);
+                }
+            },
+            error: function (json) {
+                self.$message.error('查询L2网格失败');
+            }
         });
-    })
-  }
+    }
 
-  /**
-   * @description 加载百度地图基础组件js
-   * @param {string} ak
-   */
-  export function asyncLoadBaiduJs() {
-    return new Promise((resolve, reject) => {
-      if (typeof BMap !== 'undefined') {
-        resolve(BMap)
-        return true
-      }
-      window.onBMapCallback = function () {
-        var map = new BMapGL.Map('bdmap'); // 创建Map实例
-        var point = new BMapGL.Point(116.404, 39.915); // 创建点坐标
-        map.centerAndZoom(point, 14);
-        map.enableScrollWheelZoom(); // 启用滚轮放大缩小
-        initPoint(map);
-      }
-      let script = document.createElement('script')
-      script.type = 'text/javascript'
-      script.src = 'http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b&callback=onBMapCallback'
-      script.onerror = reject
-      document.head.appendChild(script)
-    })
-  }
+    function queryExistCabinet(self) {
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: {requestNo: new Date().getTime(), needNo: 'SZFT20210622010250792'},
+            url: "/selectCabinet/selectExistCabinet",
+            success: function (data) {
+                if (data.code == 200) {
 
-  export function initPoint(map) {
-    // 创建点标记
-    var marker1 = new BMapGL.Marker(new BMapGL.Point(116.404, 39.925));
-    var marker2 = new BMapGL.Marker(new BMapGL.Point(116.404, 39.915));
-    var marker3 = new BMapGL.Marker(new BMapGL.Point(116.395, 39.935));
-    var marker4 = new BMapGL.Marker(new BMapGL.Point(116.415, 39.931));
+                    //显示环网柜
+                    showCabinet(data.data);
 
+                    cabinets.push(0);
 
-    var opts1 = {
-      position: new BMapGL.Point(116.404, 39.925), // 指定文本标注所在的地理位置
-      offset: new BMapGL.Size(-30, 5) // 设置文本偏移量
+                } else {
+                    self.$message.error('获取L2网格失败失败：' + data.message);
+                }
+            },
+            error: function (json) {
+                self.$message.error('查询L2网格失败');
+            }
+        });
+    }
+
+    function showCabinet(cabinet) {
+
+        var myIcon = new BMapGL.Icon("../static/source/1.png", new BMapGL.Size(60, 50));
+
+        for (var i = 0; i < cabinet.length; i++) {
+            var point = new BMapGL.Point(cabinet[i].longitude, cabinet[i].latitude);
+            var marker = new BMapGL.Marker(point, {
+                icon: myIcon
+            });
+            marker.uid = cabinet[i].cabinetCategory;
+            marker.setZIndex(99999);
+            var content = "<h4>环网柜信息</h4>"
+                + "环网柜编码：" + cabinet[i].cabinetNo + "<br/> "
+                + "环网柜型号:" + cabinet[i].type + "<br /> "
+                + "控制负荷:" + cabinet[i].clValue + "<br /> "
+                + "总容量:" + cabinet[i].capacity + "<br /> "
+                + "已用容量:" + cabinet[i].useCapacity + "<br /> "
+                + "环网柜总出线单元数:" + cabinet[i].outputNo + "<br /> "
+                + "环网柜已用出线单元数数:" + cabinet[i].outputUsedNo + "<br /> "
+                + "所属线路:" + cabinet[i].lineNo + "<br /> "
+                + "自动化情况:" + cabinet[i].lineNo + "<br /> ";
+            addClickHandler(content, marker);
+            markers.push(marker);
+            map.addOverlay(marker);
+        }
+    }
+
+    //点击事件
+    function addClickHandler(content, obj) {
+        obj.addEventListener("click", function (e) {
+            if (e.domEvent != null) {
+                //覆盖物阻止事件冒泡到地图上
+                e.domEvent.stopPropagation();
+                e.domEvent.cancelBubble = true;
+            }
+            var point = new BMapGL.Point(e.latLng.lng, e.latLng.lat);
+            var infoWindow = new BMapGL.InfoWindow(content, opts);  // 创建信息窗口对象
+            map.openInfoWindow(infoWindow, point);                //开启信息窗口
+        });
+    }
+
+    // 创建信息窗口
+    var opts = {
+        width: 200,
+        height: 300,
+        enableCloseOnClick: false
     };
-    var opts2 = {
-      position: new BMapGL.Point(116.404, 39.915), // 指定文本标注所在的地理位置
-      offset: new BMapGL.Size(-30, 5) // 设置文本偏移量
-    };
-    var opts3 = {
-      position: new BMapGL.Point(116.395, 39.935), // 指定文本标注所在的地理位置
-      offset: new BMapGL.Size(-30, 5) // 设置文本偏移量
-    };
-    var opts4 = {
-      position: new BMapGL.Point(116.415, 39.931), // 指定文本标注所在的地理位置
-      offset: new BMapGL.Size(-30, 5) // 设置文本偏移量
-    };
-    // 创建文本标注对象
-    var label1 = new BMapGL.Label('候选点1', opts1);
-    var label2 = new BMapGL.Label('候选点2', opts2);
-    var label3 = new BMapGL.Label('候选点3', opts3);
-    var label4 = new BMapGL.Label('候选点4', opts4);
 
-    // 自定义文本标注样式
-    label1.setStyle({
-      color: 'blue',
-      borderRadius: '5px',
-      borderColor: '#ccc',
-      padding: '10px',
-      fontSize: '12px',
-      height: '20px',
-      lineHeight: '20px',
-      fontFamily: '微软雅黑'
-    });
-    label2.setStyle({
-      color: 'blue',
-      borderRadius: '5px',
-      borderColor: '#ccc',
-      padding: '10px',
-      fontSize: '12px',
-      height: '20px',
-      lineHeight: '20px',
-      fontFamily: '微软雅黑'
-    });
-    label3.setStyle({
-      color: 'blue',
-      borderRadius: '5px',
-      borderColor: '#ccc',
-      padding: '10px',
-      fontSize: '12px',
-      height: '20px',
-      lineHeight: '20px',
-      fontFamily: '微软雅黑'
-    });
-    label4.setStyle({
-      color: 'blue',
-      borderRadius: '5px',
-      borderColor: '#ccc',
-      padding: '10px',
-      fontSize: '12px',
-      height: '20px',
-      lineHeight: '20px',
-      fontFamily: '微软雅黑'
-    });
+    function showRequest(request) {
+        var marker = new BMapGL.Marker(new BMapGL.Point(request.longitude, request.latitude));
+        var content = "<h4>用户填报需求信息</h4>"
+            + "需求编码：" + request.needNo + "<br/> "
+            + "报装用户名称:" + request.needName + "<br /> "
+            + "报装容量:" + request.needCapacity + "<br /> "
+            + "变压器构成:" + request.transformerConstitute + "<br /> "
+            + "报装位置:" + request.locationName + "<br /> "
+            + "负荷性质:" + request.typeName + "<br /> "
+            + "供电区域类型:" + request.areaName + "<br /> ";
+        addClickHandler(content, marker);
+        map.addOverlay(marker);
+    }
 
-    // 在地图上添加点标记
-    map.addOverlay(marker1);
-    map.addOverlay(marker2);
-    map.addOverlay(marker3);
-    map.addOverlay(marker4);
+    var cabinet1=false;
 
-    map.addOverlay(label1);
-    map.addOverlay(label2);
-    map.addOverlay(label3);
-    map.addOverlay(label4);
+    function newCabinet1(self) {
 
-  }
+        //地图已添加此类型环网柜
+        if(cabinet1){
+            return;
+        }
+
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: {requestNo: new Date().getTime(), needNo: 'SZFT20210622010250792'},
+            url: "/selectCabinet/selectPlanCabinetExistLine",
+            success: function (data) {
+                if (data.code == 200) {
+
+                    //显示环网柜
+                    showCabinet(data.data);
+
+                    cabinets.push(2);
+
+                    cabinet1=true;
+
+                } else {
+                    self.$message.error('获取L2网格失败失败：' + data.message);
+                }
+            },
+            error: function (json) {
+                self.$message.error('查询L2网格失败');
+            }
+        });
+    }
+
+    var cabinet2=false;
+
+    function newCabinet2(self) {
+
+        //地图已添加此类型环网柜
+        if(cabinet2){
+            return;
+        }
+
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: {requestNo: new Date().getTime(), needNo: 'SZFT20210622010250792'},
+            url: "/selectCabinet/selectPlanCabinetPlanLine",
+            success: function (data) {
+                if (data.code == 200) {
+
+                    //显示环网柜
+                    showCabinet(data.data);
+
+                    cabinets.push(3);
+
+                    cabinet2=true;
+
+                } else {
+                    self.$message.error('获取L2网格失败失败：' + data.message);
+                }
+            },
+            error: function (json) {
+                self.$message.error('查询L2网格失败');
+            }
+        });
+    }
+
+    function delCabinet() {
+        for (var i = 0; i < markers.length; i++) {
+            if (markers[i].uid === 2 || markers[i].uid === 3) {
+                map.removeOverlay(markers[i]);
+            }
+        }
+
+        cabinets = cabinets.filter(item => {
+            return item !== 2 && item !== 3;
+        })
+    }
+
+    function calculate(loading, self) {
+        var requestData = {};
+        requestData.requestNo = new Date().getTime();
+        requestData.cabinetType = cabinets;
+        requestData.needNo = fillRequirementVo.needNo;
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: JSON.stringify(requestData),
+            contentType: 'application/json;charset=utf-8',
+            url: "/calculatePath",
+            success: function (data) {
+                if (data.code == 200) {
+                    self.tableData1 = data.data;
+                    loading.close();
+                    self.show1 = true;
+                } else {
+                    loading.close();
+                    self.$message.error('查询规划方案失败：' + data.message);
+                }
+            },
+            error: function (json) {
+                loading.close();
+                self.$message.error('查询规划方案失败');
+            }
+        });
+    }
+
+    function schemeConfirm(self) {
+        var requestData = {};
+        requestData.requestNo = new Date().getTime();
+        requestData.needNo = fillRequirementVo.needNo;
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: JSON.stringify(requestData),
+            contentType: 'application/json;charset=utf-8',
+            url: "/schemeConfirm",
+            success: function (data) {
+                if (data.code == 200) {
+                    self.$message({
+                        message: '成功',
+                        type: 'success'
+                    });
+                } else {
+                    self.$message.error('保存规划方案失败：' + data.message);
+                }
+            },
+            error: function (json) {
+                self.$message.error('保存规划方案失败');
+            }
+        });
+    }
 
 </script>
 

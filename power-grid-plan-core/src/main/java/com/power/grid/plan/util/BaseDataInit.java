@@ -106,6 +106,10 @@ public class BaseDataInit implements CommandLineRunner {
         return roadBoList.stream().filter(roadBo -> !noGoRoadIdSet.contains(roadBo.getId())).collect(Collectors.toList());
     }
 
+    private List<RoadBo> filterInvalidNoGoRoad(List<RoadBo> roadBoList, List<NodeBo> nodeBoList) {
+        Set<Long> nodeBoSet = nodeBoList.stream().map(NodeBo::getId).collect(Collectors.toSet());
+        return roadBoList.stream().filter(roadBo -> nodeBoSet.contains(roadBo.getStartNodeId()) && nodeBoSet.contains(roadBo.getEndNodeId())).collect(Collectors.toList());
+    }
 
     @Override
     public void run(String... args) throws Exception {
@@ -118,6 +122,9 @@ public class BaseDataInit implements CommandLineRunner {
         //加载计算节点信息
         luceneSpatial.createIndex(nodeBoList);
         LOG.info("位置信息计算初始化完成");
+        //过滤无效路段
+        roadBoList = filterInvalidNoGoRoad(roadBoList, nodeBoList);
+        //过滤禁挖路段
         Set<NoGoBo> noGoBoSet = initNoGoInfo();
         roadBoList = filterNoGoRoad(roadBoList, noGoBoSet);
         LOG.info("禁挖路段过滤完成，剩余路段信息数量：{}", roadBoList.size());

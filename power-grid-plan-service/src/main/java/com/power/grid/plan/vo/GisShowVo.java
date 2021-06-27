@@ -14,8 +14,6 @@ import java.util.List;
 @Builder
 public class GisShowVo {
 
-    private FillRequirementVo fillRequirementVo;
-
     private GridL2Vo gridL2Vo;
 
     private List<CabinetVo> cabinetVoList;

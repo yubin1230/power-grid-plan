@@ -28,4 +28,12 @@ public class InitParamServiceImpl implements InitParamService {
         po.setCreateTime(new Date());
         requirementParamMapper.insert(po);
     }
+
+    @Override
+    public RequirementParamBo selectOne(String needNo) {
+        RequirementParamBo bo=new RequirementParamBo();
+        RequirementParamPo po=requirementParamMapper.selectOne(needNo);
+        BeanUtils.copyProperties(po,bo);
+        return bo;
+    }
 }

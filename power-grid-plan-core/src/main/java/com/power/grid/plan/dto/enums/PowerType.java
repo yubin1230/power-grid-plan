@@ -24,8 +24,8 @@ public enum PowerType {
 
     public static PowerType getPowerTypeMap(int code) {
         PowerType[] areaTypes = PowerType.values();
-        for (PowerType areaType : areaTypes) {
-            if (areaType.getCode() == code) return areaType;
+        for (PowerType powerType : areaTypes) {
+            if (powerType.getCode() == code) return powerType;
         }
         throw new BizException(ResponseCodeEnum.DEFAULT_ERROR,"用电类型不存在");
     }

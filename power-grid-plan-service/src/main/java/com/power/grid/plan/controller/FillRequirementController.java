@@ -4,6 +4,10 @@ import com.power.grid.plan.BaseResponse;
 import com.power.grid.plan.JsonUtil;
 import com.power.grid.plan.ResponseCodeEnum;
 import com.power.grid.plan.dto.bo.FillRequirementBo;
+import com.power.grid.plan.dto.bo.NodeBo;
+import com.power.grid.plan.dto.enums.AreaType;
+import com.power.grid.plan.dto.enums.PowerType;
+import com.power.grid.plan.util.MapUtil;
 import com.power.grid.plan.vo.FillRequirementVo;
 import com.power.grid.plan.service.FillRequirementService;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +65,34 @@ public class FillRequirementController {
         } catch (Exception e) {
             LOG.error("requestNo：{} 新增用户需求异常", vo.getRequestNo(), e);
             return BaseResponse.error(vo.getRequestNo(), ResponseCodeEnum.DEFAULT_ERROR);
+        }
+    }
+
+    @PostMapping("/selectFillRequirement")
+    public BaseResponse<FillRequirementVo> selectFillRequirement(FillRequirementVo fillRequirementVo) {
+        try {
+            LOG.info("requestNo：{} 获取用户报装信息：{}", fillRequirementVo.getRequestNo(), fillRequirementVo.getNeedNo());
+
+            FillRequirementBo fillRequirementBo = fillRequirementService.selectOne(fillRequirementVo.getNeedNo());
+
+            BeanUtils.copyProperties(fillRequirementBo, fillRequirementVo);
+            fillRequirementVo.setTypeName(PowerType.getPowerTypeMap(fillRequirementBo.getType()).getDesc());
+            fillRequirementVo.setAreaName(AreaType.getAreaTypeMap(fillRequirementBo.getArea()).getDesc());
+
+            //坐标转换
+            NodeBo fillRequirementNode= MapUtil.parseBDCoordinate(fillRequirementBo.getLongitude(),fillRequirementBo.getLatitude());
+            if(Objects.nonNull(fillRequirementNode)){
+                fillRequirementVo.setLongitude(fillRequirementNode.getLongitude());
+                fillRequirementVo.setLatitude(fillRequirementNode.getLatitude());
+            }
+
+
+            LOG.info("requestNo：{} 获取用户报装信息成功，{}", fillRequirementVo.getRequestNo(), JsonUtil.tryToString(fillRequirementVo));
+
+            return BaseResponse.success(fillRequirementVo.getRequestNo(), fillRequirementVo);
+        } catch (Exception e) {
+            LOG.error("requestNo：{} 获取用户报装信息失败", fillRequirementVo.getRequestNo(), e);
+            return BaseResponse.error(fillRequirementVo.getRequestNo(), ResponseCodeEnum.DEFAULT_ERROR);
         }
     }
 

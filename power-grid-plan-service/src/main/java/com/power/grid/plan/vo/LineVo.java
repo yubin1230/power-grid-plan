@@ -13,6 +13,8 @@ public class LineVo {
 
     private Integer lineType;
 
+    private String lineTypeName;
+
     private String linePoints;
 
     private Integer linePower;
@@ -24,6 +26,8 @@ public class LineVo {
     private String stationName;
 
     private Integer overload;
+
+    private String overloadType;
 
     private String busNo;
 

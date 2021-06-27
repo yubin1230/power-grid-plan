@@ -11,8 +11,8 @@ import java.util.Map;
  */
 @Data
 public class AStarMapInfo {
-    private Map<Long, AStarRoadHandleBo> roadHandleBoMap; // 二维数组的地图
-    private Map<Long, NodeBo> nodeBoMap;
+    private Map<String, AStarRoadHandleBo> roadHandleBoMap; // 二维数组的地图
+    private Map<String, NodeBo> nodeBoMap;
     private AStarNodeBo start; // 起始结点
     private AStarNodeBo end; // 最终结点
     private double hFactor;

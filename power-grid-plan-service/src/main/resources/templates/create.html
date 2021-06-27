@@ -333,7 +333,6 @@
                 this.$refs['form'].validate((valid) => {
                     if (valid) {
                         var self = this;
-                        console.log(JSON.stringify(self.form));
                         var formObj = self.form;
                         formObj.electricRoomNos = formObj.electricRoom.join(",").toString();
 
@@ -405,8 +404,7 @@
             }
             window.onBMapCallback = function () {
                 map = new BMapGL.Map('bdmap'); // 创建Map实例
-                var point = new BMapGL.Point(116.404, 39.915); // 创建点坐标
-                map.centerAndZoom(point, 10);
+                map.centerAndZoom("深圳福田区", 15);
                 map.enableScrollWheelZoom(); // 启用滚轮放大缩小
 
                 local = new BMapGL.LocalSearch(map, {
@@ -442,7 +440,7 @@
             map.addOverlay(marker);
             var content = "<h5>" + maps[i].title + "</h5><br /> "
                 + "地址:     " + maps[i].address + "<br /> ";
-            addClickHandler(content, marker);
+            addClickHandler(content, marker,point);
             var markerObj = {uid: maps[i].uid, marker: marker};
             markerList.push(markerObj);
         }
@@ -453,9 +451,9 @@
 
 
     //点击事件
-    function addClickHandler(content, marker) {
+    function addClickHandler(content, marker,point) {
         marker.addEventListener("click", function (e) {
-            openInfo(content, e.targe);
+            openInfo(content,point);
         });
     }
 
@@ -466,10 +464,8 @@
     };
 
     //生成窗体
-    function openInfo(content, p) {
-        var point = new BMapGL.Point(p.getPosition().lng, p.getPosition().lat);
+    function openInfo(content, point) {
         var infoWindow = new BMapGL.InfoWindow(content, opts);  // 创建信息窗口对象
-        console.log(point);
         map.panTo(point);
         map.openInfoWindow(infoWindow, point);                //开启信息窗口
     }
@@ -479,7 +475,8 @@
             if (markerList[i].uid == address.uid) {
                 var content = "<h5>" + address.title + "</h5><br /> "
                     + "地址:     " + address.address + "<br /> ";
-                openInfo(content, markerList[i].marker);
+                var point = new BMapGL.Point(markerList[i].marker.getPosition().lng, markerList[i].marker.getPosition().lat);
+                openInfo(content,point);
             }
         }
     }

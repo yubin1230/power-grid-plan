@@ -1,4 +1,4 @@
-package com.power.grid.plan.dto.vo;
+package com.power.grid.plan.vo;
 
 import lombok.Data;
 

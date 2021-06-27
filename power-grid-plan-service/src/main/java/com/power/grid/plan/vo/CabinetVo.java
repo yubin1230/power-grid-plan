@@ -34,5 +34,9 @@ public class CabinetVo {
 
     private Integer automation;
 
+    private String automationName;
+
     private String controlType;
+
+    private int cabinetCategory;
 }

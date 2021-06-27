@@ -23,6 +23,17 @@ public class HandleBo {
     */
     private Double sumPrice;
 
+
+    /**
+     * 总距离
+     */
+    private Double sumDistance;
+
+    /**
+    * 计算上下文
+    */
+    private CalculateContextBo context;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

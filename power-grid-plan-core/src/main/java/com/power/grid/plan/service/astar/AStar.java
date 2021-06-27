@@ -13,8 +13,8 @@ import java.util.*;
  */
 public class AStar {
 
-    Queue<AStarNodeBo> openList = new PriorityQueue<>(); // 优先队列(升序)
-    List<AStarNodeBo> closeList = new ArrayList<>();
+    private Queue<AStarNodeBo> openList = new PriorityQueue<>(); // 优先队列(升序)
+    private List<AStarNodeBo> closeList = new ArrayList<>();
 
     /**
      * 开始算法
@@ -65,9 +65,9 @@ public class AStar {
      */
     private void addNeighborNodeInOpen(AStarMapInfo mapInfo, AStarNodeBo current) {
 
-        Map<Long, AStarRoadHandleBo> roadHandleBoMap = mapInfo.getRoadHandleBoMap();
+        Map<String, AStarRoadHandleBo> roadHandleBoMap = mapInfo.getRoadHandleBoMap();
         Long nodeId = current.getNodeBo().getId();
-        AStarRoadHandleBo roadHandleBo = roadHandleBoMap.get(nodeId);
+        AStarRoadHandleBo roadHandleBo = roadHandleBoMap.get(String.valueOf(nodeId));
         Map<Long, Double> distance = roadHandleBo.getDistance();
         distance.forEach((key, value) -> addNeighborNodeInOpen(mapInfo, current, key, value));
     }
@@ -80,7 +80,7 @@ public class AStar {
             AStarNodeBo end = mapInfo.getEnd();
             double G = current.getG() + value; // 计算邻结点的G值
             AStarNodeBo child = findNodeInOpen(nodeId);
-            NodeBo nodeBo = mapInfo.getNodeBoMap().get(nodeId);
+            NodeBo nodeBo = mapInfo.getNodeBoMap().get(String.valueOf(nodeId));
             if (child == null) {
                 double H = calcH(end.getNodeBo(), nodeBo, mapInfo.getHFactor()); // 计算H值
                 if (nodeId.equals(end.getNodeBo().getId())) {

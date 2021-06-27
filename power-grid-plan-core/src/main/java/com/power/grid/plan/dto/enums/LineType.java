@@ -1,5 +1,8 @@
 package com.power.grid.plan.dto.enums;
 
+import com.power.grid.plan.ResponseCodeEnum;
+import com.power.grid.plan.exception.BizException;
+
 /**
  * 线路类型
  * @author yubin
@@ -12,6 +15,15 @@ public enum LineType {
 
     private int code;
     private String desc;
+
+
+    public static LineType getLineTypeMap(int code) {
+        LineType[] lineTypes = LineType.values();
+        for (LineType lineType : lineTypes) {
+            if (lineType.getCode() == code) return lineType;
+        }
+        throw new BizException(ResponseCodeEnum.DEFAULT_ERROR,"区域类型不存在");
+    }
 
     private LineType(int code, String desc) {
         this.code = code;

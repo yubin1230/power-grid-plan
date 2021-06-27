@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 @Component
 public class InitRoadMap {
 
-    public Map<Long, AStarRoadHandleBo> initRoadMap(List<RoadBo> roadBoList) {
-        Map<Long, AStarRoadHandleBo> roadHandleBoMap = new ConcurrentHashMap<>();
+    public Map<String, AStarRoadHandleBo> initRoadMap(List<RoadBo> roadBoList) {
+        Map<String, AStarRoadHandleBo> roadHandleBoMap = new ConcurrentHashMap<>();
         Map<Long, List<RoadBo>> startNodeMap = roadBoList.parallelStream().collect(Collectors.groupingBy(RoadBo::getStartNodeId));
         Map<Long, List<RoadBo>> endNodeMap = roadBoList.parallelStream().collect(Collectors.groupingBy(RoadBo::getEndNodeId));
         Map<Long, List<RoadBo>> nodeMap = new HashMap<>();
@@ -58,7 +58,7 @@ public class InitRoadMap {
             ro.setNodeId(k);
             ro.setDistance(probabilityMap);
             ro.setSumPrice(sumPriceMap);
-            roadHandleBoMap.put(k, ro);
+            roadHandleBoMap.put(String.valueOf(k), ro);
         });
 
         return roadHandleBoMap;

@@ -1,10 +1,8 @@
 package com.power.grid.plan.service.impl;
 
-import com.power.grid.plan.ResponseCodeEnum;
 import com.power.grid.plan.dto.bo.*;
-import com.power.grid.plan.dto.enums.AreaType;
+import com.power.grid.plan.dto.enums.CabinetCategoryType;
 import com.power.grid.plan.dto.enums.LineType;
-import com.power.grid.plan.exception.BizException;
 import com.power.grid.plan.mapper.LineMapper;
 import com.power.grid.plan.pojo.LinePo;
 import com.power.grid.plan.service.CabinetService;
@@ -37,8 +35,8 @@ public class LineServiceImpl implements LineService {
     private static final int THREE_REMOTE = 1;
 
     /**
-    * 环网柜数量
-    */
+     * 环网柜数量
+     */
     private static final int CABINET_NUM = 4;
 
 
@@ -49,11 +47,11 @@ public class LineServiceImpl implements LineService {
     private CabinetService cabinetService;
 
     @Override
-    public List<LineBo> queryLine(String gridNo, ContextBo contextBo) {
+    public List<LineBo> queryLine(CabinetContextBo cabinetContextBo) {
 
-        List<LineBo> queryLineList = queryLineList(gridNo);
+        List<LineBo> queryLineList = queryLineList(cabinetContextBo.getGridL2Bo().getGridNo());
 
-        return filterRule(queryLineList, contextBo);
+        return filterRule(queryLineList, cabinetContextBo);
     }
 
     @Override
@@ -67,42 +65,45 @@ public class LineServiceImpl implements LineService {
     }
 
     @Override
-    public List<CabinetBo> newCabinetExistLine(String gridNo, ContextBo contextBo) {
+    public List<CabinetBo> newCabinetExistLine(CabinetContextBo cabinetContextBo) {
 
-        List<LineBo> queryLineList = queryLineList(gridNo);
+        List<LineBo> queryLineList = queryLineList(cabinetContextBo.getGridL2Bo().getGridNo());
 
         //过滤线路规则
-        List<LineBo> filterList=queryLineList.stream().filter(lineBo ->lineBo.getLineType().equals(LineType.PLAN.getCode())).collect(Collectors.toList());
-        filterList = filterCabinetExistLine(filterList, contextBo);
+        List<LineBo> filterList = queryLineList.stream().filter(lineBo -> lineBo.getLineType().equals(LineType.ALREADY_EXISTING.getCode())).collect(Collectors.toList());
+        filterList = filterCabinetExistLine(filterList, cabinetContextBo);
 
-        return getNewCabinetList(filterList,contextBo);
+        return getNewCabinetList(filterList, cabinetContextBo, CabinetCategoryType.EXIST_LINE_PLAN_CATEGORY);
     }
 
     @Override
-    public List<CabinetBo> newCabinetPlanLine(String gridNo, ContextBo contextBo) {
+    public List<CabinetBo> newCabinetPlanLine(CabinetContextBo cabinetContextBo) {
 
-        List<LineBo> queryLineList = queryLineList(gridNo);
+        List<LineBo> queryLineList = queryLineList(cabinetContextBo.getGridL2Bo().getGridNo());
 
-        List<LineBo> filterList=queryLineList.stream().filter(lineBo ->lineBo.getLineType().equals(LineType.PLAN.getCode())).collect(Collectors.toList());
+        List<LineBo> filterList = queryLineList.stream().filter(lineBo -> lineBo.getLineType().equals(LineType.PLAN.getCode())).collect(Collectors.toList());
 
-        return getNewCabinetList(filterList,contextBo);
+        return getNewCabinetList(filterList, cabinetContextBo, CabinetCategoryType.PLAN_LINE_PLAN_CATEGORY);
     }
 
 
-    private List<LineBo> filterRule(List<LineBo> queryLineList, ContextBo contextBo) {
+    private List<LineBo> filterRule(List<LineBo> queryLineList, CabinetContextBo cabinetContextBo) {
         return queryLineList.stream().filter(lineBo -> {
             //线路已有
             if (!lineBo.getLineType().equals(LineType.ALREADY_EXISTING.getCode())) {
                 return false;
             }
-            FillRequirementBo fillRequirementBo = contextBo.getFillRequirementBo();
-            RequirementParamBo requirementParamBo = contextBo.getRequirementParamBo();
+            FillRequirementBo fillRequirementBo = cabinetContextBo.getFillRequirementBo();
+            ParamBo paramBo = cabinetContextBo.getParamBo();
             //线路容量+负荷需求≤线路最大总容量*调整系数
-
-//            if(lineBo.getLinePowerUsed()+fillRequirementBo.getNeedCapacity()>lineBo.getLinePower()*requirementParamBo)
+            //线路容量=已使用容量+规划用量
+            int useCapacity = lineBo.getLinePowerUsed() + lineBo.getPlanLinePowerUsed() + fillRequirementBo.getNeedCapacity() * paramBo.getConversionRatio() / 100;
+            if (useCapacity > paramBo.getMaximumCapacity() * paramBo.getLineThresholdRatio()) {
+                return false;
+            }
 
             //线路自动化要求
-            double requestRatio = queryAutomationRequirement(contextBo);
+            double requestRatio = paramBo.getAutomationRatio().doubleValue() / 100;
             if (queryAutomationRatio(lineBo.getLineNo()) < requestRatio) {
                 return false;
             }
@@ -116,22 +117,6 @@ public class LineServiceImpl implements LineService {
         }).collect(Collectors.toList());
     }
 
-    private double queryAutomationRequirement(ContextBo contextBo) {
-        FillRequirementBo fillRequirementBo = contextBo.getFillRequirementBo();
-        RequirementParamBo requirementParamBo = contextBo.getRequirementParamBo();
-        AreaType areaType = AreaType.getAreaTypeMap(fillRequirementBo.getArea());
-        switch (areaType) {
-            case A1:
-                return requirementParamBo.getA1AutomationRatio();
-
-            case A2:
-                return requirementParamBo.getA2AutomationRatio();
-
-            case B:
-                return requirementParamBo.getBAutomationRatio();
-        }
-        throw new BizException(ResponseCodeEnum.DEFAULT_ERROR, "非法区域类型");
-    }
 
     private double queryAutomationRatio(String lineNo) {
         List<CabinetBo> cabinetBoList = cabinetService.queryCabinetListByLineNo(lineNo);
@@ -143,31 +128,22 @@ public class LineServiceImpl implements LineService {
     }
 
 
-    private List<LineBo> filterCabinetExistLine(List<LineBo> queryLineList, ContextBo contextBo) {
-        FillRequirementBo fillRequirementBo = contextBo.getFillRequirementBo();
-        RequirementParamBo requirementParamBo = contextBo.getRequirementParamBo();
-        AreaType areaType = AreaType.getAreaTypeMap(fillRequirementBo.getArea());
-        final int nodeNum;
-        switch (areaType) {
-            case A1:
-                nodeNum = requirementParamBo.getA1NodeNum();
-                break;
-            case A2:
-                nodeNum = requirementParamBo.getA2NodeNum();
-                break;
-            case B:
-                nodeNum = requirementParamBo.getBNodeNum();
-                break;
-            default:
-                throw new BizException(ResponseCodeEnum.DEFAULT_ERROR, "非法区域类型");
-        }
-        return queryLineList.stream().filter(lineBo -> lineBo.getLinePoints().split(";").length < nodeNum).collect(Collectors.toList());
+    private List<LineBo> filterCabinetExistLine(List<LineBo> queryLineList, CabinetContextBo cabinetContextBo) {
+        ParamBo paramBo = cabinetContextBo.getParamBo();
+        return queryLineList.stream().filter(lineBo -> {
+            List<CabinetBo> cabinetBoList = cabinetService.queryCabinetListByLineNo(lineBo.getLineNo());
+            return cabinetBoList.size() < paramBo.getNodeNum();
+        }).collect(Collectors.toList());
     }
 
-    private List<CabinetBo> getNewCabinetList(List<LineBo> queryLineList, ContextBo contextBo){
-        FillRequirementBo fillRequirementBo = contextBo.getFillRequirementBo();
-        List<PointBo> pointBoList=LinePointUtil.getPedalSimplexAndDistance(queryLineList,new NodeBo(fillRequirementBo.getLongitude(), fillRequirementBo.getLatitude()));
-        return pointBoList.stream().map(pointBo -> CabinetBo.builder().longitude(pointBo.getLongitude()).latitude(pointBo.getLatitude()).build()).collect(Collectors.toList()).subList(0,CABINET_NUM);
+    private List<CabinetBo> getNewCabinetList(List<LineBo> queryLineList, CabinetContextBo cabinetContextBo, CabinetCategoryType cabinetCategoryType) {
+        FillRequirementBo fillRequirementBo = cabinetContextBo.getFillRequirementBo();
+        List<PointBo> pointBoList = LinePointUtil.getPedalSimplexAndDistance(queryLineList, new NodeBo(fillRequirementBo.getLongitude(), fillRequirementBo.getLatitude()));
+        List<CabinetBo> cabinetBoList = pointBoList.stream().map(pointBo -> CabinetBo.builder().gridNo(pointBo.getLineBo().getGridNo()).lineNo(pointBo.getLineBo().getLineNo()).stationName(pointBo.getLineBo().getStationName()).longitude(pointBo.getLongitude()).latitude(pointBo.getLatitude()).cabinetCategory(cabinetCategoryType).build()).collect(Collectors.toList());
+
+        if (pointBoList.size() > CABINET_NUM) return cabinetBoList.subList(0, CABINET_NUM);
+
+        return cabinetBoList;
     }
 
 

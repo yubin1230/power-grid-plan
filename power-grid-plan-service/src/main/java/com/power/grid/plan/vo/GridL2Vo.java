@@ -14,6 +14,8 @@ public class GridL2Vo {
 
     private Integer gridType;
 
+    private String gridTypeName;
+
     private String gridEdge;
 
 

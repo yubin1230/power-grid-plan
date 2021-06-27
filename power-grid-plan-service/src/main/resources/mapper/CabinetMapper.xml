@@ -39,13 +39,17 @@
         <if test="lineNo != null">
             and line_no = #{lineNo,jdbcType=VARCHAR}
         </if>
+
+        <if test="cabinetNo != null">
+            and cabinet_no = #{cabinetNo,jdbcType=VARCHAR}
+        </if>
     </select>
 
     <select id="selectListByLineNoList" resultMap="BaseResultMap" parameterType="java.util.List">
         select
         <include refid="Base_Column_List"/>
         from yk_gh_cabinet
-        where is_deleted=1
+        where is_deleted=1 and
         line_no in
         <foreach item="lineNo" collection="lineNoList" separator="," open="(" close=")" index="">
             #{lineNo, jdbcType=VARCHAR}

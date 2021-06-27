@@ -1,5 +1,6 @@
 package com.power.grid.plan.dto.bo;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -8,12 +9,18 @@ import lombok.Data;
  * @date 2020/11/30 23:21
  */
 @Data
+@Builder
 public class NodeBo {
 
     /**
      * 节点id
      */
     private Long id;
+
+    /**
+    * 节点编码
+    */
+    private String nodeNo;
 
     /**
      * 经度
@@ -36,6 +43,13 @@ public class NodeBo {
     }
 
     public NodeBo(Double longitude, Double latitude) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
+    public NodeBo(Long id, String nodeNo, Double longitude, Double latitude) {
+        this.id = id;
+        this.nodeNo = nodeNo;
         this.longitude = longitude;
         this.latitude = latitude;
     }

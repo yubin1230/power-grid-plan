@@ -1,19 +1,14 @@
 package com.power.grid.plan.controller;
 
 import com.power.grid.plan.Page;
-import com.power.grid.plan.dto.bo.HandleBo;
 import com.power.grid.plan.dto.bo.RoadBo;
-import com.power.grid.plan.dto.vo.HandleVo;
 import com.power.grid.plan.util.BaseDataInit;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 

@@ -2,156 +2,161 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <!-- import CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-  <style>
-    .el-menu-vertical-demo:not(.el-menu--collapse) {
-      width: 200px;
-      min-height: 400px;
-    }
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link href="http://mapopen.cdn.bcebos.com/github/BMapGLLib/DrawingManager/src/DrawingManager.min.css"
+          rel="stylesheet">
+    <style>
+        .el-menu-vertical-demo:not(.el-menu--collapse) {
+            width: 200px;
+            min-height: 400px;
+        }
 
-    .el-row {
-      margin-top: 10px;
-      margin-bottom: 20px;
-    }
+        .el-row {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
 
-    .el-col {
-      margin-top: 20px;
-      border-radius: 4px;
-      text-align: center;
-    }
+        .el-col {
+            margin-top: 20px;
+            border-radius: 4px;
+            text-align: center;
+        }
 
-    .bg-purple-dark {
-      background: white;
-    }
+        .bg-purple-dark {
+            background: white;
+        }
 
-    .bg-purple {
-      background: white;
-    }
+        .bg-purple {
+            background: white;
+        }
 
-    .bg-purple-light {
-      background: white;
-    }
+        .bg-purple-light {
+            background: white;
+        }
 
-    .grid-content {
-      min-height: 80px;
-    }
+        .grid-content {
+            min-height: 80px;
+        }
 
-    .row-bg {
-      padding: 0 5px;
-      background-color: white;
-    }
+        .row-bg {
+            padding: 0 5px;
+            background-color: white;
+        }
 
 
-    .el-carousel__item h3 {
-      color: #606266;
-      font-size: 18px;
-      opacity: 0.75;
-      margin: 0;
-    }
+        .el-carousel__item h3 {
+            color: #606266;
+            font-size: 18px;
+            opacity: 0.75;
+            margin: 0;
+        }
 
-    .el-carousel__item:nth-child(2n) {
-      background-color: white;
-      opacity: 0.8;
-    }
+        .el-carousel__item:nth-child(2n) {
+            background-color: white;
+            opacity: 0.8;
+        }
 
-    .el-carousel__item:nth-child(2n+1) {
-      background-color: white;
-      opacity: 0.8;
-    }
-  </style>
+        .el-carousel__item:nth-child(2n+1) {
+            background-color: white;
+            opacity: 0.8;
+        }
+
+
+    </style>
 </head>
 
 <body>
-  <div id="app">
-
+<div id="app">
 
 
     <template>
-      <el-tabs v-model="activeName">
-        <el-tab-pane label="人工校核" name="first">
-          <div style="float: right; padding: 3px 0">
-            <el-button type="primary">方案对比</el-button>
-            <el-button>上一步</el-button>
-          </div>
+        <el-tabs v-model="activeName">
+            <el-tab-pane label="人工校核" name="first">
+                <div style="float: right; padding: 3px 0">
+                    <el-button type="primary">方案对比</el-button>
+                    <el-button>上一步</el-button>
+                </div>
 
-        </el-tab-pane>
-      </el-tabs>
+            </el-tab-pane>
+        </el-tabs>
     </template>
 
 
-    <div style="margin-left: 80px;margin-top: 50px;z-index: 99999;position: absolute;width: 250px;height: 400px;background-color: white;opacity: 0.8;">
-    <el-row>
-      <h3 style="margin-left: 20px;color: #606266;">设备单元</h3>
-      <el-col :span="8" :offset="2">
-        <el-card :body-style="{ padding: '0px' }">
-          <el-image style="width: 50px; height: 50px" src="./source/1.png" fit="contain"></el-image>
-          <div style="padding: 3px;">
-            <span>环网柜</span>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="8" :offset="3">
-        <el-card :body-style="{ padding: '0px' }">
-          <el-image style="width: 50px; height: 50px" src="./source/2.png" fit="contain"></el-image>
-          <div style="padding: 3px;">
-            <span>环网柜</span>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="8" :offset="2">
-        <el-card :body-style="{ padding: '0px' }">
-          <el-image style="width: 50px; height: 50px" src="./source/3.png" fit="contain"></el-image>
-          <div style="padding: 3px;">
-            <span>环网柜</span>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="8" :offset="3">
-        <el-card :body-style="{ padding: '0px' }">
-          <el-image style="width: 50px; height: 50px" src="./source/4.png" fit="contain"></el-image>
-          <div style="padding: 3px;">
-            <span>环网柜</span>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="8" :offset="2">
-        <el-card :body-style="{ padding: '0px' }">
-          <el-image style="width: 50px; height: 50px" src="./source/5.png" fit="contain"></el-image>
-          <div style="padding: 3px;">
-            <span>环网柜</span>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="8" :offset="3">
-        <el-card :body-style="{ padding: '0px' }">
-          <el-image style="width: 50px; height: 50px" src="./source/6.png" fit="contain"></el-image>
-          <div style="padding: 3px;">
-            <span>环网柜</span>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-  </div>
-
+    <div
+            style="margin-left: 80px;margin-top: 50px;z-index: 99999;position: absolute;width: 250px;height: 400px;background-color: white;opacity: 0.8;">
+        <el-row>
+            <h3 style="margin-left: 20px;color: #606266;">设备单元</h3>
+            <el-col :span="8" :offset="2">
+                <el-card :body-style="{ padding: '0px' }">
+                    <el-image style="width: 50px; height: 50px" src="../static/source/1.png" fit="contain"
+                              @click="draw('marker')">
+                    </el-image>
+                    <div style="padding: 3px;">
+                        <span>环网柜</span>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="8" :offset="3">
+                <el-card :body-style="{ padding: '0px' }">
+                    <el-image style="width: 50px; height: 50px" src="../static/source/2.png" fit="contain"></el-image>
+                    <div style="padding: 3px;">
+                        <span>环网柜</span>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="8" :offset="2">
+                <el-card :body-style="{ padding: '0px' }">
+                    <el-image style="width: 50px; height: 50px" src="../static/source/3.png" fit="contain"></el-image>
+                    <div style="padding: 3px;">
+                        <span>环网柜</span>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="8" :offset="3">
+                <el-card :body-style="{ padding: '0px' }">
+                    <el-image style="width: 50px; height: 50px" src="../static/source/4.png" fit="contain"></el-image>
+                    <div style="padding: 3px;">
+                        <span>环网柜</span>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="8" :offset="2">
+                <el-card :body-style="{ padding: '0px' }">
+                    <el-image style="width: 50px; height: 50px" src="../static/source/5.png" fit="contain"></el-image>
+                    <div style="padding: 3px;">
+                        <span>环网柜</span>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="8" :offset="3">
+                <el-card :body-style="{ padding: '0px' }">
+                    <el-image style="width: 50px; height: 50px" src="../static/source/6.png" fit="contain"></el-image>
+                    <div style="padding: 3px;">
+                        <span>环网柜</span>
+                    </div>
+                </el-card>
+            </el-col>
+        </el-row>
+    </div>
 
 
     <div id="planList"
-      style="margin-left: 1500px;margin-top: 100px;z-index: 99999;position: absolute;width: 330px;height: 250px;">
-      <template>
-        <el-carousel indicator-position="outside" style="height: 200px;" height="150px" :autoplay="false"
-          trigger="click">
-          <el-carousel-item v-for="(item,index) in  plans" :key="item" style="height: 150px;">
-            <h3 style="text-align: center;margin-top: 10px;">{{ item }}</h3>
-            <div style="text-align: center;margin-top: 30px;">
-              <el-button type="primary">编辑</el-button>
-              <el-button type="info">取消</el-button>
-              <el-button type="primary">保存</el-button>
-            </div>
-          </el-carousel-item>
-        </el-carousel>
-      </template>
+         style="margin-left: 1500px;margin-top: 100px;z-index: 99999;position: absolute;width: 330px;height: 250px;">
+        <template>
+            <el-carousel indicator-position="outside" style="height: 200px;" height="150px" :autoplay="false"
+                         trigger="click" @change="((pre, next) => {change(pre, next)})">
+                <el-carousel-item v-for="(item,index) in  plans" :key="item" style="height: 150px;">
+                    <h3 style="text-align: center;margin-top: 10px;">{{ item }}</h3>
+                    <div style="text-align: center;margin-top: 30px;">
+                        <el-button type="primary" @click="">编辑</el-button>
+                        <el-button type="info">取消</el-button>
+                        <el-button type="primary">保存</el-button>
+                    </div>
+                </el-carousel-item>
+            </el-carousel>
+        </template>
     </div>
 
 
@@ -159,62 +164,7 @@
 
     </div>
 
-
-    <div id="menu1" style="display:none">
-      <div style="background-color:white;height: 400px;width: 200px;">
-        <div> <i class="el-icon-menu"></i>
-          <span style="font-size: 15px;font-family: '微软雅黑'">土建单元</span>
-        </div>
-        <el-row :gutter="2">
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-image style="width: 50px; height: 50px" src="./source/1.png" fit="contain"></el-image>
-              <el-tag size="mini">环网柜</el-tag>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-image style="width: 50px; height: 50px" src="./source/2.png" fit="contain"></el-image>
-              <el-tag size="mini">环网柜(带三遥)</el-tag>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-image style="width: 50px; height: 50px" src="./source/3.png" fit="contain"></el-image>
-              <el-tag size="mini">联络柜</el-tag>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-image style="width: 50px; height: 50px" src="./source/4.png" fit="contain"></el-image>
-              <el-tag size="mini">联络柜(带三遥)</el-tag>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-image style="width: 50px; height: 50px" src="./source/5.png" fit="contain"></el-image>
-              <el-tag size="mini">开闭所</el-tag>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-image style="width: 50px; height: 50px" src="./source/6.png" fit="contain"></el-image>
-              <el-tag size="mini">开闭所(带三遥)</el-tag>
-            </div>
-          </el-col>
-        </el-row>
-        <!-- <div class="block" v-for="(url,index) in urls" :key="url">
-          <el-image style="width: 50px; height: 50px" :src=url fit="contain"></el-image>
-          <el-tag size="mini">{{ names[index] }}</el-tag>
-        </div> -->
-      </div>
-    </div>
-  </div>
-
-
-
-
-  </div>
+</div>
 
 
 </body>
@@ -225,92 +175,295 @@
 <!-- import JavaScript -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <script type="module">
-  var Main = {
-    data() {
-      return {
-        activeName: 'first',
-        url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-        names: ['环网柜', '环网柜(带三遥)', '联络柜', '联络柜(带三遥)', '开闭所', '开闭所(带三遥)'],
-        urls: ['./source/1.png', './source/2.png', './source/3.png', './source/4.png', './source/5.png', './source/6.png'],
-        plans: ['方案一', '方案二', '方案三']
-      };
-    },
-    mounted() {
-      this.initMap()
-    },
-    methods: {
-      initMap() {
-        loadBMap()
-      }
-    }
-  };
-  var Ctor = Vue.extend(Main)
-  new Ctor().$mount('#app')
+    var Main = {
+        data() {
+            return {
+                activeName: 'first',
+                names: ['环网柜', '环网柜(带三遥)', '联络柜', '联络柜(带三遥)', '开闭所', '开闭所(带三遥)'],
+                urls: ['../static/source/1.png', '../static/source/2.png', '../static/source/3.png', '../static/source/4.png', '../static/source/5.png', '../static/source/6.png'],
+                plans: []
+            };
+        },
+        mounted() {
+            this.initMap()
+        },
+        methods: {
+            initMap() {
+                loadBMap(this)
+            }, draw(e) {
+                draw(e);
+            }, change(pre) {
+                showMap(pre);
+            }
+        }
+    };
+    var Ctor = Vue.extend(Main)
 
-  /**
-   * @description 加载百度地图相关资源js
-   * @param {string} ak
-   */
-  export default function loadBMap(ak) {
-    return new Promise((resolve, reject) => {
-      asyncLoadBaiduJs(ak)
-        .catch(err => {
-          reject(err)
+    new Ctor().$mount('#app')
+
+
+    var styleOptions = {
+        strokeColor: '#5E87DB',   // 边线颜色
+        fillColor: '#5E87DB',     // 填充颜色。当参数为空时，圆形没有填充颜色
+        strokeWeight: 2,          // 边线宽度，以像素为单位
+        strokeOpacity: 1,         // 边线透明度，取值范围0-1
+        fillOpacity: 0.2          // 填充透明度，取值范围0-1
+    };
+
+    var labelOptions = {
+        borderRadius: '2px',
+        background: '#FFFBCC',
+        border: '1px solid #E1E1E1',
+        color: '#703A04',
+        fontSize: '12px',
+        letterSpacing: '0',
+        padding: '5px'
+    };
+
+
+    // 实例化鼠标绘制工具
+    var drawingManager;
+
+
+    /**
+     * @description 加载百度地图相关资源js
+     * @param {string} ak
+     */
+    export default function loadBMap(self) {
+        return new Promise((resolve, reject) => {
+            asyncLoadBaiduJs(self)
+                .catch(err => {
+                    reject(err)
+                })
         })
-    })
-  }
+    }
 
-  /**
-   * @description 加载百度地图基础组件js
-   * @param {string} ak
-   */
-  export function asyncLoadBaiduJs() {
-    return new Promise((resolve, reject) => {
-      if (typeof BMap !== 'undefined') {
-        resolve(BMap)
-        return true
-      }
-      window.onBMapCallback = function () {
-        var map = new BMapGL.Map('bdmap'); // 创建Map实例
-        var point = new BMapGL.Point(116.404, 39.915); // 创建点坐标
-        map.centerAndZoom(point, 10);
-        map.enableScrollWheelZoom(); // 启用滚轮放大缩小
+    /**
+     * @description 加载百度地图基础组件js
+     * @param {string} ak
+     */
+    var map;
 
-        //定义一个控件类
-        // function ZoomControl() {
-        //   this.defaultAnchor = BMAP_ANCHOR_TOP_LEFT;
-        //   this.defaultOffset = new BMapGL.Size(20, 20)
-        // }
-        // //通过JavaScript的prototype属性继承于BMap.Control
-        // ZoomControl.prototype = new BMapGL.Control();
+    export function asyncLoadBaiduJs(self) {
+        return new Promise((resolve, reject) => {
+            if (typeof BMap !== 'undefined') {
+                resolve(BMap)
+                return true
+            }
+            window.onBMapCallback = function () {
+                map = new BMapGL.Map("bdmap", {enableMapClick: false});
+                ; // 创建Map实例
+                map.centerAndZoom("深圳福田区", 15);
+                map.enableScrollWheelZoom(); // 启用滚轮放大缩小
 
-        // //自定义控件必须实现自己的initialize方法，并且将控件的DOM元素返回
-        // //在本方法中创建个div元素作为控件的容器，并将其添加到地图容器中
-        // ZoomControl.prototype.initialize = function (map) {
-        //   //创建一个dom元素
-        //   var div = document.createElement('div');
+                //查询用户报装信息
+                queryRequirement(self);
 
-        //   div.innerHTML = $("#menu1").html();
+                //规划信息
+                querySchemeList(self);
 
-        //   // 添加DOM元素到地图中
-        //   map.getContainer().appendChild(div);
-        //   // 将DOM元素返回
-        //   return div;
-        // }
-        // //创建控件元素
-        // var myZoomCtrl = new ZoomControl();
-        // //添加到地图中
-        // map.addControl(myZoomCtrl);
+                map.addEventListener('tilesloaded', function () {
+                    // 实例化鼠标绘制工具
+                    drawingManager = new BMapGLLib.DrawingManager(map, {
+                        // isOpen: true,        // 是否开启绘制模式
+                        enableCalculate: false, // 绘制是否进行测距测面
+                        enableSorption: true,   // 是否开启边界吸附功能
+                        sorptiondistance: 20,   // 边界吸附距离
+                        polylineOptions: styleOptions,   // 线的样式
+                        labelOptions: labelOptions     // label样式
+                    });
+                });
 
-      }
-      let script = document.createElement('script')
-      script.type = 'text/javascript'
-      script.src = 'http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b&callback=onBMapCallback'
-      script.onerror = reject
-      document.head.appendChild(script)
-    })
-  }
+                let script1 = document.createElement('script')
+                script1.type = 'text/javascript'
+                script1.src = 'http://mapopen.cdn.bcebos.com/github/BMapGLLib/DrawingManager/src/DrawingManager.min.js'
+                script1.onerror = reject
+                document.head.appendChild(script1)
 
+
+            }
+
+            let script = document.createElement('script')
+            script.type = 'text/javascript'
+            script.src = 'http://api.map.baidu.com/api?type=webgl&v=1.0&ak=WqWguexTXotbEEIPGgxDGGHr2z2Etw4b&callback=onBMapCallback'
+            script.onerror = reject
+            document.head.appendChild(script)
+
+
+        })
+    }
+
+    function draw(e) {
+
+        switch (e) {
+            case 'marker': {
+                var drawingType = BMAP_DRAWING_MARKER;
+                break;
+            }
+            case 'polyline': {
+                var drawingType = BMAP_DRAWING_POLYLINE;
+                break;
+            }
+        }
+        // 进行绘制
+        if (drawingManager._isOpen && drawingManager.getDrawingMode() === drawingType) {
+            drawingManager.close();
+        } else {
+            drawingManager.setDrawingMode(drawingType);
+            drawingManager.open();
+        }
+    }
+
+    var fillRequirementVo;
+
+    function queryRequirement(self) {
+
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: {requestNo: new Date().getTime(), needNo: 'SZFT20210622010250792'},
+            url: "/fillRequirement/selectFillRequirement",
+            success: function (data) {
+                if (data.code == 200) {
+                    fillRequirementVo = data.data;
+                } else {
+                    self.$message.error('获取L2网格失败失败：' + data.message);
+                }
+            },
+            error: function (json) {
+                self.$message.error('查询L2网格失败');
+            }
+        });
+    }
+
+
+    var planSchemes = [];
+
+    function querySchemeList(self) {
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: {requestNo: new Date().getTime(), needNo: 'SZFT20210622010250792'},
+            url: "/scheme/selectScheme",
+            success: function (data) {
+                if (data.code == 200) {
+
+                    for (var i = 0; i < data.data.length; i++) {
+                        self.plans.push(data.data[i].caseName);
+                    }
+
+
+                    planSchemes = data.data;
+
+                    showMap(0);
+                } else {
+                    self.$message.error('查询规划信息失败：' + data.message);
+                }
+            },
+            error: function (json) {
+                self.$message.error('查询规划信息失败');
+            }
+        });
+    }
+
+    function showMap(index) {
+
+        //清除覆盖物
+        map.clearOverlays();
+
+        //显示用户报装点
+        showRequest(fillRequirementVo);
+
+        //显示线路
+        showRoadList(planSchemes[index], self);
+
+        //显示环网柜
+        showCabinet(planSchemes[index].cabinetVo);
+    }
+
+    function showRoadList(planScheme) {
+        var points = [];
+        var pointStr = planScheme.casePoints.split(";");
+        for (var i = 0; i < pointStr.length; i++) {
+            var xys = pointStr[i].split(",");
+            var point = new BMapGL.Point(xys[0], xys[1]);
+            points.push(point);
+        }
+        var polygon = new BMapGL.Polyline(points, {
+            strokeColor: 'red',
+            strokeWeight: 2,
+            strokeOpacity: 0.5
+        });
+        map.addOverlay(polygon);
+        map.setViewport(points); //将所有的点放置在最佳视野内
+    }
+
+    function showCabinet(cabinet) {
+
+        var myIcon = new BMapGL.Icon("../static/source/1.png", new BMapGL.Size(60, 50));
+
+        var point = new BMapGL.Point(cabinet.longitude, cabinet.latitude);
+        var marker = new BMapGL.Marker(point, {
+            icon: myIcon
+        });
+        marker.setZIndex(99999);
+        var content = "<h4>环网柜信息</h4>"
+        + "环网柜编码：" + cabinet.cabinetNo + "<br/> "
+        + "环网柜型号:" + cabinet.type + "<br /> "
+        + "控制负荷:" + cabinet.clValue + "<br /> "
+        + "总容量:" + cabinet.capacity + "<br /> "
+        + "已用容量:" + cabinet.useCapacity + "<br /> "
+        + "环网柜总出线单元数:" + cabinet.outputNo + "<br /> "
+        + "环网柜已用出线单元数数:" + cabinet.outputUsedNo + "<br /> "
+        + "所属线路:" + cabinet.lineNo + "<br /> "
+        + "自动化情况:" + nullToStr(cabinet.automationName) + "<br /> ";
+        addClickHandler(content, marker);
+        map.addOverlay(marker);
+    }
+
+
+    //点击事件
+    function addClickHandler(content, obj) {
+        obj.addEventListener("click", function (e) {
+            if (e.domEvent != null) {
+                //覆盖物阻止事件冒泡到地图上
+                e.domEvent.stopPropagation();
+                e.domEvent.cancelBubble = true;
+            }
+            var point = new BMapGL.Point(e.latLng.lng, e.latLng.lat);
+            var infoWindow = new BMapGL.InfoWindow(content, opts);  // 创建信息窗口对象
+            map.openInfoWindow(infoWindow, point);                //开启信息窗口
+        });
+    }
+
+
+    // 创建信息窗口
+    var opts = {
+        width: 200,
+        height: 300,
+        enableCloseOnClick: false
+    };
+
+    function showRequest(request) {
+        var marker = new BMapGL.Marker(new BMapGL.Point(request.longitude, request.latitude));
+        var content = "<h4>用户填报需求信息</h4>"
+            + "需求编码：" + request.needNo + "<br/> "
+            + "报装用户名称:" + request.needName + "<br /> "
+            + "报装容量:" + request.needCapacity + "<br /> "
+            + "变压器构成:" + request.transformerConstitute + "<br /> "
+            + "报装位置:" + request.locationName + "<br /> "
+            + "负荷性质:" + request.typeName + "<br /> "
+            + "供电区域类型:" + request.areaName + "<br /> ";
+        addClickHandler(content, marker);
+        map.addOverlay(marker);
+    }
+
+    function nullToStr(data) {
+        if (data === null) {
+            data = '';
+        }
+        return data;
+    }
 </script>
 
 </html>

@@ -35,7 +35,7 @@ public class FillRequirementVo extends BaseRequest {
      * 报装容量
      */
     @NotNull(message = "报装容量不能为空")
-    @Min(value=1)
+    @Min(value = 1)
     private Integer needCapacity;
 
     /**
@@ -53,16 +53,16 @@ public class FillRequirementVo extends BaseRequest {
      * 报装位置经度
      */
     @NotNull(message = "经度不能为空")
-    @DecimalMax(value="135.08333333333334",message="请输入合理经度范围")
-    @DecimalMin(value="73.55",message="请输入合理经度范围")
+    @DecimalMax(value = "135.08333333333334", message = "请输入合理经度范围")
+    @DecimalMin(value = "73.55", message = "请输入合理经度范围")
     private Double longitude;
 
     /**
      * 报装位置纬度
      */
     @NotNull(message = "纬度不能为空")
-    @DecimalMax(value="53.916666666666664",message="请输入合理纬度范围")
-    @DecimalMin(value="4.433333333333334",message="请输入合理纬度范围")
+    @DecimalMax(value = "53.916666666666664", message = "请输入合理纬度范围")
+    @DecimalMin(value = "4.433333333333334", message = "请输入合理纬度范围")
     private Double latitude;
 
     /**
@@ -70,6 +70,12 @@ public class FillRequirementVo extends BaseRequest {
      */
     @NotNull(message = "负荷性质不能为空")
     private Integer type;
+
+
+    /**
+     * 负荷性质 1：工业 2：商业 3：居民 4：充电桩 5：综合
+     */
+    private String typeName;
 
     /**
      * 是否需要双电源  1：不需要 2：需要
@@ -98,6 +104,11 @@ public class FillRequirementVo extends BaseRequest {
      */
     @NotNull(message = "供电区域类型不能为空")
     private Integer area;
+
+    /**
+     * 区域 1：A+ 2: A 3:B
+     */
+    private String areaName;
 
     /**
      * 供电电房编码集合

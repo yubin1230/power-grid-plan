@@ -90,11 +90,13 @@
             }
             window.onBMapCallback = function () {
                 map = new BMapGL.Map('bdmap'); // 创建Map实例
-                var point = new BMapGL.Point(116.404, 39.915); // 创建点坐标
-                map.centerAndZoom(point, 10);
+                map.centerAndZoom("深圳福田区", 15);
                 map.enableScrollWheelZoom(); // 启用滚轮放大缩小
                 //加载地图信息
                 queryGridL2();
+
+                //显示用户包装点
+                queryRequirement();
             }
             let script = document.createElement('script')
             script.type = 'text/javascript'
@@ -104,11 +106,33 @@
         })
     }
 
-    function queryGridL2() {
+    function queryRequirement() {
+
         $.ajax({
             type: "post",
             dataType: "json",
-            data: {requestNo: new Date().getTime(), needNo: 'SZFT20210520004051212'},
+            data: {requestNo: new Date().getTime(), needNo: 'SZFT20210622010250792'},
+            url: "/fillRequirement/selectFillRequirement",
+            success: function (data) {
+                if (data.code == 200) {
+                    //显示用户报装点
+                    showRequest(data.data);
+                } else {
+                    this.$message.error('获取L2网格失败失败：' + data.message);
+                }
+            },
+            error: function (json) {
+                this.$message.error('查询L2网格失败');
+            }
+        });
+    }
+
+    function queryGridL2() {
+
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            data: {requestNo: new Date().getTime(), needNo: 'SZFT20210622010250792'},
             url: "/showGis/select",
             success: function (data) {
                 if (data.code == 200) {
@@ -122,14 +146,12 @@
                     //显示环网柜
                     showCabinet(data.data.cabinetVoList);
 
-                    //显示用户报装点
-                    showRequest(data.data.fillRequirementVo);
                 } else {
-                    self.$message.error('获取L2网格失败失败：' + data.message);
+                    this.$message.error('获取L2网格失败失败：' + data.message);
                 }
             },
             error: function (json) {
-                self.$message.error('查询L2网格失败');
+                this.$message.error('查询L2网格失败');
             }
         });
     }
@@ -137,7 +159,8 @@
 
     function showGridL2(gridL2) {
         var points = [];
-        var pointStr = gridL2.gridEdge.split(";")
+        var pointStr = gridL2.gridEdge.split(";");
+
         for (var i = 0; i < pointStr.length; i++) {
             var xys = pointStr[i].split(",");
             var point = new BMapGL.Point(xys[0], xys[1]);
@@ -148,8 +171,30 @@
             strokeWeight: 2,
             strokeOpacity: 0.5
         });
+
+        var content = "<h4>L2网格信息</h4>"
+            + "网格编码：" + gridL2.gridNo + "<br/> "
+            + "网格名称:" + gridL2.gridName + "<br /> "
+            + "网格类型:" + gridL2.gridTypeName + "<br /> ";
+
+
+        addClickHandler(content, polygon, opts);
         map.addOverlay(polygon);
         map.setViewport(points); //将所有的点放置在最佳视野内
+    }
+
+    //点击事件
+    function addClickHandler(content, obj, opts) {
+        obj.addEventListener("click", function (e) {
+            if (e.domEvent != null) {
+                //覆盖物阻止事件冒泡到地图上
+                e.domEvent.stopPropagation();
+                e.domEvent.cancelBubble = true;
+            }
+            var point = new BMapGL.Point(e.latLng.lng, e.latLng.lat);
+            var infoWindow = new BMapGL.InfoWindow(content, opts);  // 创建信息窗口对象
+            map.openInfoWindow(infoWindow, point);                //开启信息窗口
+        });
     }
 
     function showLine(lines) {
@@ -157,20 +202,44 @@
         for (var i = 0; i < lines.length; i++) {
             var points = [];
             var pointStr = lines[i].linePoints.split(";");
-
             for (var j = 0; j < pointStr.length; j++) {
                 var xys = pointStr[j].split(",");
                 var point = new BMapGL.Point(xys[0], xys[1]);
                 points.push(point);
             }
-            var polyline = new BMapGL.Polyline(points, {
-                strokeColor: 'blue',
-                strokeWeight: 2,
-                strokeOpacity: 0.5
-            });
-            map.addOverlay(polyline);
+                var polyline = new BMapGL.Polyline(points, {
+                    strokeColor: 'blue',
+                    strokeWeight: 2,
+                    strokeOpacity: 0.5
+                });
+                var content = "<h4>线路信息</h4>"
+                    + "线路编码：" + lines[i].lineNo + "<br/> "
+                    + "线路类型:" + lines[i].lineTypeName + "<br /> "
+                    + "额定容量:" + lines[i].linePower + "<br /> "
+                    + "已使用容量:" + lines[i].linePowerUsed + "<br /> "
+                    + "规划占用容量:" + lines[i].planLinePowerUsed + "<br /> "
+                    + "线路所属变电站:" + lines[i].stationName + "<br /> "
+                    + "高峰负荷期间是否存在重过载:" + lines[i].overloadType + "<br /> ";
+                addClickHandler(content, polyline, opts1);
+                map.addOverlay(polyline);
         }
     }
+
+
+
+    // 创建信息窗口
+    var opts = {
+        width: 200,
+        height: 180,
+        enableCloseOnClick: false
+    };
+
+    // 创建信息窗口
+    var opts1 = {
+        width: 200,
+        height: 300,
+        enableCloseOnClick: false
+    };
 
 
     function showCabinet(cabinet) {
@@ -183,6 +252,17 @@
                 icon: myIcon
             });
             marker.setZIndex(99999);
+            var content = "<h4>环网柜信息</h4>"
+                + "环网柜编码：" + cabinet[i].cabinetNo + "<br/> "
+                + "环网柜型号:" + cabinet[i].type + "<br /> "
+                + "控制负荷:" + cabinet[i].clValue + "<br /> "
+                + "总容量:" + cabinet[i].capacity + "<br /> "
+                + "已用容量:" + cabinet[i].useCapacity + "<br /> "
+                + "环网柜总出线单元数:" + cabinet[i].outputNo + "<br /> "
+                + "环网柜已用出线单元数数:" + cabinet[i].outputUsedNo + "<br /> "
+                + "所属线路:" + cabinet[i].lineNo + "<br /> "
+                + "自动化情况:" + cabinet[i].automationName == null ? "" : cabinet[i].automationName + "<br /> ";
+            addClickHandler(content, marker, opts1);
             map.addOverlay(marker);
         }
     }
@@ -190,6 +270,15 @@
 
     function showRequest(request) {
         var marker = new BMapGL.Marker(new BMapGL.Point(request.longitude, request.latitude));
+        var content = "<h4>用户填报需求信息</h4>"
+            + "需求编码：" + request.needNo + "<br/> "
+            + "报装用户名称:" + request.needName + "<br /> "
+            + "报装容量:" + request.needCapacity + "<br /> "
+            + "变压器构成:" + request.transformerConstitute + "<br /> "
+            + "报装位置:" + request.locationName + "<br /> "
+            + "负荷性质:" + request.typeName + "<br /> "
+            + "供电区域类型:" + request.areaName + "<br /> ";
+        addClickHandler(content, marker, opts1);
         map.addOverlay(marker);
     }
 </script>

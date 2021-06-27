@@ -24,4 +24,14 @@ public class PowerController {
     public String initParam(Locale locale, Model model) {
         return "initParams";
     }
+
+    @RequestMapping("/humanIntervention")
+    public String humanIntervention(Locale locale, Model model) {
+        return "humanIntervention";
+    }
+
+    @RequestMapping("/schemeShow")
+    public String schemeShow(Locale locale, Model model) {
+        return "schemeShow";
+    }
 }

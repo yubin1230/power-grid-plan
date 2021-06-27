@@ -1,5 +1,6 @@
 package com.power.grid.plan.dto.bo;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -10,15 +11,12 @@ import java.util.List;
  * @date 2021/6/6 12:34
  */
 @Data
-public class ContextBo {
+@Builder
+public class CabinetContextBo {
 
     private GridL2Bo gridL2Bo;
 
     private FillRequirementBo fillRequirementBo;
 
-    private RequirementParamBo requirementParamBo;
-
-    private List<LineBo> lineBoList;
-
-    private List<CabinetBo> cabinetBoList;
+    private ParamBo paramBo;
 }
